@@ -1,0 +1,102 @@
+*{
+  margin: 0;
+  padding: 0;
+}
+
+#logo{
+  width: 2.5em;
+  height: 2.5em;
+  float:left;
+}
+
+#logodiv{
+	display: fixed;
+}
+
+h1{
+  font-size: 2em;
+  color: white;
+  font-family: Helvetica;
+  padding-bottom: 0.2em;
+}
+
+body{
+  overflow: hidden;
+}
+
+#body{
+  margin: auto;
+}
+
+label{
+	padding-bottom: 1em;
+}
+
+nav{
+  background-color: #0053A1 ;
+  height: 100%;
+  width: 15em;
+  padding-top: 2em;
+  font-family: Helvetica;
+  padding-right: 0.25em;
+  padding-left: 0.25em;
+}
+
+article, #divlogo{
+	margin-bottom: 2em;
+	color: white;
+	text-align: center
+}
+
+.filter {
+	border:1px solid #fff;
+	width: 13em;
+	height: 2em;
+	margin-top: 0.2em;
+}
+
+input{
+	border:1px solid #fff;
+	width: 13em;
+	height: 2em;
+	padding: 0.2em;
+	margin-top: 0.2em;
+}
+#display{
+  width: 82.5%;
+  height: 100%;
+  float:left;
+  position: absolute;
+  top:0;
+  left:15.5em;
+}
+
+
+#buttonSourceTarget{
+	border: none;
+  text-align: center;
+  text-decoration: none;
+  width: 10.8em;
+	padding-top: 0.3em;
+	padding-bottom: 0.3em;
+	margin: auto;
+}
+
+div.target{
+  background-color: #F79646;
+  color: white;
+  transition-duration: 1s;
+}
+
+div.source{
+  background-color: #9BBB59;
+  color: black;
+  transition-duration: 0.2s;
+}
+
+
+#buttonSourceTarget:hover{
+	background-color: white;
+	color: rgb(0,0,160);
+	cursor: pointer;
+}
