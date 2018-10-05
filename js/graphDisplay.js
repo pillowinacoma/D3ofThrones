@@ -9,25 +9,7 @@ $(document).ready(function() {
       affichage(data);
 
 }
-        //Collect all links from json.js
 
-/*
-            // Compute automatically the distinct nodes with all their informations from the links.
-            links.forEach(function(link) {
-                
-
-                link.source = nodes[link.source.name] || (nodes[link.source.name] = 
-                    jQuery.each(link.source, function(i, val) {
-                    i+': '+val                    
-                    })
-                );
-
-                link.target = nodes[link.target.name] || (nodes[link.target.name] = 
-                    jQuery.each(link.target, function(i, val) {
-                    i+': '+val                    
-                    })
-                );
-            });*/
 });
 function affichage(data){
 
