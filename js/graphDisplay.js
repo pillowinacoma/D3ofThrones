@@ -28,7 +28,12 @@ function affichage(data){
             return x += link.value;
 
         },0);
-        //if(value >
+        if(value > valueMax || valueMax === 0){
+            valueMax = value;
+        }
+        else if (value < valueMin || valueMin === 0) {
+            valueMin = value;
+        }
         node.value = value;
         nodes[node.label] = node;   
         }
@@ -44,7 +49,7 @@ function affichage(data){
 
     });
 
-
+    console.log(valueMin, valueMax);
     var links = data.links;
 
                 //Width of the window
@@ -60,11 +65,10 @@ function affichage(data){
                 .nodes(d3.values(nodes))
                 .links(links)
                 .size([width, height])
-                .linkDistance(50)
+                .linkDistance(1)
                 .charge(-10000)
                 .on('tick', tick)
                 .start();
-
 
             //Create and initialize the svg for graph
             var svg = d3.select('#display').append('svg')
@@ -109,12 +113,13 @@ function affichage(data){
 
                   
 
+            var r = d3.scale.sqrt().domain([valueMin,valueMax]).range([10,50]);
             //Create and initialize all nodes
             var circle = svg.append('g').selectAll('circle')
                 .data(force.nodes())
                 .enter().append('circle')
                 .attr('r', function(d){
-                    return Math.log(d.value)*20;
+                    return r(d.value);
                 })
                 .attr('id', function(d) {
                     return d.id;
@@ -133,11 +138,12 @@ function affichage(data){
             //function to resize svg, display and graph display
               function resize() {
                 width = window.innerWidth, height = window.innerHeight;
-                var x = $('nav').width()
-                $('#display').attr('width',$(window).width()-x).attr('height',$(window).height());
-                $('svg').attr('width', width-x).attr('height', height);
+                $('#display').attr('width',$(window).width()).attr('height',$(window).height());
                 force.size([width, height]).resume();
+                
+                $('svg').attr('width', width).attr('height', height);
               }
+
 
 
             //function which placed all nodes.
@@ -151,7 +157,7 @@ function affichage(data){
             function linkArc(d) {
                 var dx = d.target.x - d.source.x,
                     dy = d.target.y - d.source.y,
-                    dr = Math.sqrt(dx * dx + dy * dy);
+                    dr = 0;
 
                 return 'M' + d.source.x + ',' + d.source.y + 'A' + dr + ',' + dr + ' 0 0,1 ' + d.target.x + ',' + d.target.y;
             }
