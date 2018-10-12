@@ -1,0 +1,6 @@
+$(document).ready(function() {
+    var requestURL = "data/BB_S01E01_009_D3.json";
+    var request = new XMLHttpRequest();
+    request.open('GET', requestURL);
+    request.responseType = 'json';
+    request.send();

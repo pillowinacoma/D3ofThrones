@@ -65,8 +65,8 @@ function affichage(data){
                 .nodes(d3.values(nodes))
                 .links(links)
                 .size([width, height])
-                .linkDistance(200)
-                .charge(-1000)
+                .linkDistance(1)
+                .charge(-10000)
                 .on('tick', tick)
                 .start();
 
@@ -74,9 +74,9 @@ function affichage(data){
             var svg = d3.select('#display').append('svg')
                 .attr('width', width)
                 .attr('height', height)
-                /*.call(d3.behavior.zoom().on('zoom', function () {
+                .call(d3.behavior.zoom().on('zoom', function () {
                 svg.attr('transform', 'translate(' + d3.event.translate + ')' + ' scale(' + d3.event.scale + ')')
-              }))*/
+              }))
                 .append('g'); 
 
 
@@ -123,8 +123,7 @@ function affichage(data){
                 })
                 .attr('id', function(d) {
                     return d.id;
-                })
-                .call(force.drag);                ;
+                });
 
             //Create and initialize all text (Name of nodes)
             var text = svg.append('g').selectAll('text')
@@ -134,7 +133,10 @@ function affichage(data){
                 .attr('y', '-0.8em')
                 .text(function(d) {
                     return d.label;
-                });
+                })
+                
+
+                ;
 
             //function to resize svg, display and graph display
               function resize() {
