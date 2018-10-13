@@ -2,3 +2,53 @@
   margin: 0;
   padding: 0;
 }
+h1{
+  font-size: 2em;
+  color: white;
+  font-family: Helvetica;
+  padding-bottom: 0.2em;
+}
+
+body{
+  overflow: hidden;
+}
+
+#body{
+  margin: auto;
+}
+
+label{
+  padding-bottom: 1em;
+}
+
+nav{
+  background-color: #0053A1 ;
+  height: 100%;
+  width: 15em;
+  padding-top: 2em;
+  font-family: Helvetica;
+  padding-right: 0.25em;
+  padding-left: 0.25em;
+}
+.filter {
+  border:1px solid #fff;
+  width: 13em;
+  height: 2em;
+  margin-top: 0.2em;
+}
+
+input{
+  border:1px solid #fff;
+  width: 13em;
+  height: 2em;
+  padding: 0.2em;
+  margin-top: 0.2em;
+}
+#display{
+  width: 82.5%;
+  height: 100%;
+  float:left;
+  position: absolute;
+  top:0;
+  left:15.5em;
+}

@@ -6,14 +6,28 @@ $(document).ready(function() {
     request.send();
     request.onload = function() {
       var data = request.response;
-      affichage(data);
+      display(data);
 
 }
 
 });
-function affichage(data){
 
-               //Width of the window
+function getFilter(){
+    const number = $("#nbrelations").val();
+    console.log(number)
+    return 0;
+}
+
+function filterNodes(nodes){
+    const filter = getFilter();
+    //nodes.sort((nodeA,nodeB) => (nodeA.value - nodeB.value) )
+    console.log(nodes)
+}
+
+
+function display(data){
+
+    //Width of the window
     var width = $(window).width();
     var height = $(window).height();
     var nodes = {};
@@ -38,7 +52,7 @@ function affichage(data){
         nodes[node.label] = node;   
         }
     });
-
+    filterNodes(nodes);
 
     data.links.forEach(function(link,index) {
 
@@ -49,7 +63,6 @@ function affichage(data){
 
     });
 
-    console.log(valueMin, valueMax);
     var links = data.links;
 
                 //Width of the window
