@@ -1,4 +1,5 @@
 $(document).ready(function() {
+    getFile();
     var requestURL = "data/BB_S01E01_009_D3.json";
     var request = new XMLHttpRequest();
     request.open('GET', requestURL);
@@ -6,23 +7,43 @@ $(document).ready(function() {
     request.send();
     request.onload = function() {
       var data = request.response;
-      display(data);
 
 }
 
 });
 
+function getFile(){
+    $.ajax({
+       url : './php/getFile.php',
+       type : 'GET',
+       dataType : 'json',
+
+       success : function(result, statut){
+           console.log(statut);
+           console.log(result)
+       },
+
+       error : function(resultat, statut, erreur){
+        console.log(this.url)
+         console.log("Statut :", statut, " erreur :", erreur);
+       }
+
+    });
+   
+}
+
+
 function getFilter(){
     const number = $("#nbrelations").val();
-    console.log(number)
     return 0;
 }
 
 function filterNodes(nodes){
     const filter = getFilter();
+    
     //nodes.sort((nodeA,nodeB) => (nodeA.value - nodeB.value) )
-    console.log(nodes)
 }
+
 
 
 function display(data){
