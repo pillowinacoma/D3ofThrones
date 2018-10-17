@@ -1,35 +1,39 @@
 $(document).ready(function() {
     getFile();
-    var requestURL = "data/BB_S01E01_009_D3.json";
-    var request = new XMLHttpRequest();
-    request.open('GET', requestURL);
-    request.responseType = 'json';
-    request.send();
-    request.onload = function() {
-      var data = request.response;
 
-}
 
 });
 
 function getFile(){
+    let files;
     $.ajax({
        url : './php/getFile.php',
        type : 'GET',
        dataType : 'json',
 
        success : function(result, statut){
-           console.log(statut);
-           console.log(result)
+            getData(result);
        },
 
        error : function(resultat, statut, erreur){
-        console.log(this.url)
-         console.log("Statut :", statut, " erreur :", erreur);
+            console.log("Statut :", statut, " erreur :", erreur);
        }
 
     });
-   
+}
+
+function getData(files){
+    console.log(files[0]);
+    var requestURL = "data/"+files[1];
+    var request = new XMLHttpRequest();
+    request.open('GET', requestURL);
+    request.responseType = 'json';
+    request.send();
+    request.onload = function() {
+      var data = request.response;
+      display(data);
+
+    }
 }
 
 
