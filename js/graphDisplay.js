@@ -1,4 +1,7 @@
+var datas = [];
+
 $(document).ready(function() {
+
     getFile();
 
 
@@ -24,16 +27,20 @@ function getFile(){
 
 function getData(files){
     console.log(files[0]);
-    var requestURL = "data/"+files[1];
-    var request = new XMLHttpRequest();
-    request.open('GET', requestURL);
-    request.responseType = 'json';
-    request.send();
-    request.onload = function() {
-      var data = request.response;
-      display(data);
+    files.map(function(file, index){
+        d3.json("data/"+file,function(data){
+            file = file.replace(/_D3.json/,"")
+            datas[file] = data; 
 
-    }
+        });
+        console.log(index, files.length)
+        if(files.length-1 == index){
+            console.log(datas)
+        }
+    });
+
+
+    //console.log(datas);
 }
 
 
@@ -63,10 +70,7 @@ function display(data){
         var linkSorted = data.links.filter(link => (link.source == node.id || link.target == node.id));
         if(linkSorted.length  > 0)
         { //TODO
-            const value = linkSorted.reduce(function(x , link){
-            return x += link.value;
-
-        },0);
+            const value = linkSorted.reduce(((x , link) => (x += link.value)),0);
         if(value > valueMax || valueMax === 0){
             valueMax = value;
         }
