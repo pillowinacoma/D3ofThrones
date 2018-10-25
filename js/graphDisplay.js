@@ -25,24 +25,48 @@ function getFile(){
     });
 }
 
+
+
+/*function getData(url) {
+
+
+    var promises = url.map(function(file){
+        let value = d3.json("data/"+file,function(data){
+            file = file.replace(/_D3.json/,"")
+            data.name = file;
+            return data;
+        });
+        return value;
+    })
+    Promise.all(promises).then(function(results) {
+        debugger;
+        console.log(results)
+    })
+}*/
+
 function getData(files){
     console.log(files[0]);
+
     files.map(function(file, index){
         d3.json("data/"+file,function(data){
-            file = file.replace(/_D3.json/,"")
-            datas[file] = data; 
-
+            file = file.replace(/_D3.json/,"");
+            data.name = file;
+            datas.push(data);
+            loadEnded(index, file.length);
         });
-        console.log(index, files.length)
-        if(files.length-1 == index){
-            console.log(datas)
-        }
     });
 
 
     //console.log(datas);
 }
+var isfinished = [];
+function loadEnded(index, length){
+    isfinished[index] = true;
+    if (isfinished.length == length){
+        display();
+    }
 
+}
 
 function getFilter(){
     const number = $("#nbrelations").val();
@@ -57,8 +81,11 @@ function filterNodes(nodes){
 
 
 
-function display(data){
-
+function display(){
+    data = datas[0];
+    //console.log(datas)
+    //console.log(datas[0][BB_S01E01_009])
+    console.log("test")
     //Width of the window
     var width = $(window).width();
     var height = $(window).height();
