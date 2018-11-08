@@ -1,14 +1,11 @@
 var datas = [];
 
 $(document).ready(function() {
-
     getFile();
-
 
 });
 
 function getFile(){
-    let files;
     $.ajax({
        url : './php/getFile.php',
        type : 'GET',
@@ -45,85 +42,134 @@ function getFile(){
 }*/
 
 function getData(files){
-    console.log(files[0]);
-
     files.map(function(file, index){
         d3.json("data/"+file,function(data){
             file = file.replace(/_D3.json/,"");
             data.name = file;
-            datas.push(data);
-            loadEnded(index, file.length);
+            loadEnded(data,files.length);
+
         });
     });
 
 
     //console.log(datas);
 }
-var isfinished = [];
-function loadEnded(index, length){
-    isfinished[index] = true;
-    if (isfinished.length == length){
-        display();
-    }
 
-}
+function loadEnded(data,length){
+    // All nodes of this value
+    nodes = [];
 
-function getFilter(){
-    const number = $("#nbrelations").val();
-    return 0;
-}
+    //Parse all links in order to create a new data
+    data.links.map(function(link){
+        //Parse all nodes in order to associate all nodes to take only nodes related with others
+        data.nodes.map(function(node){
+            if ((node.id == link.source || node.id == link.target) && nodes.indexOf(node) === -1) {
+                //Take all link connected to this node in order to estimate his value
+                var linkSorted = data.links.filter(link => (link.source == node.id || link.target == node.id));
+                node.value = linkSorted.reduce(((x , link) => (x += link.value)),0);
+                nodes.push(node);
+            }
 
-function filterNodes(nodes){
-    const filter = getFilter();
-    
-    //nodes.sort((nodeA,nodeB) => (nodeA.value - nodeB.value) )
-}
-
-
-
-function display(){
-    data = datas[0];
-    //console.log(datas)
-    //console.log(datas[0][BB_S01E01_009])
-    console.log("test")
-    //Width of the window
-    var width = $(window).width();
-    var height = $(window).height();
-    var nodes = {};
-    var valueMax = 0;
-    var valueMin = 0;
-
-    data.nodes.forEach(function(node,index) {
-        var linkSorted = data.links.filter(link => (link.source == node.id || link.target == node.id));
-        if(linkSorted.length  > 0)
-        { //TODO
-            const value = linkSorted.reduce(((x , link) => (x += link.value)),0);
-        if(value > valueMax || valueMax === 0){
-            valueMax = value;
-        }
-        else if (value < valueMin || valueMin === 0) {
-            valueMin = value;
-        }
-        node.value = value;
-        nodes[node.label] = node;   
-        }
-    });
-    filterNodes(nodes);
-
-    data.links.forEach(function(link,index) {
+        });
+        let test = nodes.reduce((accumulator, currentValue) => {
+            return [
+                Math.min(currentValue.value, accumulator[0]), 
+                Math.max(currentValue.value, accumulator[1])
+            ];
+        }, [Number.MAX_VALUE, Number.MIN_VALUE]);
+        data.min = test[0];
+        data.max = test[1];
 
         const source = data.nodes.find(node => node.id == link.source);
         const target = data.nodes.find(node => node.id == link.target);
         link.source = source;
-        link.target = target;
+        link.target = target;   
 
     });
+    data.nodes = nodes;
+    datas.push(data);
 
-    var links = data.links;
 
-                //Width of the window
-            var width = $(window).width();
-            var height = $(window).height();
+    if (datas.length == length){
+        displayButton();
+    }
+
+}
+
+/*function getFilter(){
+    let filter = {};
+    $(".filter").map(function(){
+        filter[this.id] = this.value;
+    });
+    return filter;
+}*/
+
+function displayButton(){
+    $("nav").append('<input type="range" step="1" id="range" value=0>');
+    $('#range').prop('min','0').prop('max', datas.length-1);
+    $('#range').on('input',function(){
+        display(this.value);
+    })
+    display(0);
+}
+
+function filterNodes(nodes){
+    //const filter = getFilter();
+    nodes.sort((nodeA,nodeB) => (nodeA.value - nodeB.value))
+    nodes = nodes.slice(1,$("#nbrelations").val());
+    return nodes;
+    //nodes.sort((nodeA,nodeB) => (nodeA.value - nodeB.value) )
+}
+
+/* function display(){
+    data = datas[0];
+
+    var svg = d3.select("svg");
+
+
+    var link = svg.append("g")
+        .attr("class", "link suit")
+        .selectAll("line")
+        .data(data.links)
+        .enter().append("line")
+    var node = svg.append("g")
+            .attr("class", "nodes")
+            .selectAll("circle")
+            .data(data.nodes)
+            .enter().append("circle")
+            .attr('r', function(d){
+                return r(d.value);
+            })
+            .attr('id', function(d) {
+                return d.id;
+            })
+            .call(d3.drag()
+            .on("start", dragstarted)
+            .on("drag", dragged)
+            .on("end", dragended));
+    node.append("text")
+        .text(function(d) { return d.label; });
+
+    simulation
+        .nodes(idList)
+        .on("tick", ticked);
+
+    simulation.force("link")
+        .links(idEdge);
+    simulation.alpha(0.1).restart();
+
+
+ }*/
+
+
+
+function display(nb){
+    console.log(nb)
+    data = datas[nb];
+    //Width of the window
+    var width = $(window).width();
+    var height = $(window).height();
+    //nodes = filterNodes(nodes);
 
 
             //Call to the function resize() on resize of the window
@@ -131,36 +177,40 @@ function display(){
 
             //Initialize force relation inside the graph
             var force = d3.layout.force()
-                .nodes(d3.values(nodes))
-                .links(links)
-                .size([width, height])
-                .linkDistance(200)
-                .charge(-1000)
-                .on('tick', tick)
-                .start();
+            .nodes(data.nodes)
+            .links(data.links)
+            .size([width, height])
+            .linkDistance(200)
+            .charge(-1000)
+            .on('tick', tick)
+            .start();
 
             //Create and initialize the svg for graph
             var svg = d3.select('#display').append('svg')
-                .attr('width', width)
-                .attr('height', height)
+            .attr('width', width)
+            .attr('height', height)
                 /*.call(d3.behavior.zoom().on('zoom', function () {
                 svg.attr('transform', 'translate(' + d3.event.translate + ')' + ' scale(' + d3.event.scale + ')')
-              }))*/
-                .append('g'); 
+            }))*/
+            .append('g'); 
 
 
             //Create and initialize all paths
-            var path = svg.append('g').selectAll('path')
-                .data(force.links())
-                .enter().append('path')
-                .attr('class', function(d) {
-                    return 'link ' + "suit";
-                })
-                .attr('id', function(d) {
-                    return d.source.id + '-' + d.target.id;
-                })
-                .attr('value', function(d){ 
-                    return d.value;
+            var path = svg.selectAll('path')
+            .data(force.links());
+
+            path.exit()
+            .remove();
+
+            path.enter().append('path')
+            .attr('class', function(d) {
+                return 'link ' + "suit";
+            })
+            .attr('id', function(d) {
+                return d.source.id + '-' + d.target.id;
+            })
+            .attr('value', function(d){ 
+                return d.value;
                 });/*
                 .attr('marker-end', function(d) {
                     return 'url(#' + d.type + ')';
@@ -168,51 +218,59 @@ function display(){
 
             //create and initialize all markers on the paths
             svg.append('defs').selectAll('marker')
-                .data(['suit', 'licensing', 'resolved'])
-                .enter().append('marker')
-                .attr('id', function(d) { return d; })
-                .attr('viewBox', '0 -5 10 10')
-                .attr('refX', 23)
-                .attr('refY', -1,4)
-                .attr('markerWidth',  7)
-                .attr('markerHeight', 7)
-                .attr('orient', 'auto')
-                .append('path')
-                .attr('d', 'M0,-5L10,0L0,5'); 
+            .data(['suit', 'licensing', 'resolved'])
+            .enter().append('marker')
+            .attr('id', function(d) { return d; })
+            .attr('viewBox', '0 -5 10 10')
+            .attr('refX', 23)
+            .attr('refY', -1,4)
+            .attr('markerWidth',  7)
+            .attr('markerHeight', 7)
+            .attr('orient', 'auto')
+            .append('path')
+            .attr('d', 'M0,-5L10,0L0,5'); 
 
-                  
-
-            var r = d3.scale.sqrt().domain([valueMin,valueMax]).range([10,50]);
+            var r = d3.scale.sqrt().domain([data.min,data.max]).range([20,50]);
             //Create and initialize all nodes
             var circle = svg.append('g').selectAll('circle')
-                .data(force.nodes())
-                .enter().append('circle')
-                .attr('r', function(d){
-                    return r(d.value);
-                })
-                .attr('id', function(d) {
-                    return d.id;
-                })
-                .call(force.drag);                ;
+            .data(force.nodes());
+
+            circle.exit()
+            .remove();
+
+            circle.enter().append('circle')
+            .attr('r', function(d){
+                return r(d.value);
+            })
+            .attr('id', function(d) {
+                return d.id;
+            })
+            .call(force.drag);                ;
 
             //Create and initialize all text (Name of nodes)
             var text = svg.append('g').selectAll('text')
-                .data(force.nodes())
-                .enter().append('text')
-                .attr('x', '2em')
-                .attr('y', '-0.8em')
-                .text(function(d) {
-                    return d.label;
-                });
+            .data(force.nodes());
+            text.exit()
+            .remove();
+
+            text.enter().append('text')
+            .attr('x', '2em')
+            .attr('y', '-0.8em')
+            .text(function(d) {
+                return d.label;
+            });
 
             //function to resize svg, display and graph display
-              function resize() {
+            function resize() {
                 width = window.innerWidth, height = window.innerHeight;
                 $('#display').attr('width',$(window).width()).attr('height',$(window).height());
                 force.size([width, height]).resume();
                 
                 $('svg').attr('width', width).attr('height', height);
-              }
+            }
+
+
+
 
 
 
@@ -226,8 +284,8 @@ function display(){
             //Function which draw arcs for the paths
             function linkArc(d) {
                 var dx = d.target.x - d.source.x,
-                    dy = d.target.y - d.source.y,
-                    dr = 0;
+                dy = d.target.y - d.source.y,
+                dr = 0;
 
                 return 'M' + d.source.x + ',' + d.source.y + 'A' + dr + ',' + dr + ' 0 0,1 ' + d.target.x + ',' + d.target.y;
             }
@@ -236,5 +294,5 @@ function display(){
             function transform(d) {
                 return 'translate(' + d.x + ',' + d.y + ')';
             }
-        
+
 }

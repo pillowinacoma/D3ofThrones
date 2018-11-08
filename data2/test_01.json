@@ -1,0 +1,15 @@
+{
+ 	"nodes": [
+	     {"id": "n44", "label": "Bogdan Wolynetz"},
+	     {"id": "n49", "label": "Marie Schrader"},
+     	 {"id": "n6", "label": "Walter White"},     	 
+     	 {"id": "n32", "label": "Carmen Molina"},    	 
+     	 {"id": "n58", "label": "Test PasPresent"}
+ 	],
+
+	"links": [
+	     {"source": "n44",  "target": "n6", "value": 10.56},
+	     {"source": "n6",  "target": "n49", "value": 12.10},
+	     {"source": "n32",  "target": "n49", "value": 6.04}
+ 	]
+}
