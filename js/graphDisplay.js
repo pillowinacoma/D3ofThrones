@@ -174,7 +174,7 @@ function display(nb){
 
             //Call to the function resize() on resize of the window
             d3.select(window).on('resize', resize);
-
+            d3.select('g').remove();
             //Initialize force relation inside the graph
             var force = d3.layout.force()
             .nodes(data.nodes)
@@ -186,7 +186,7 @@ function display(nb){
             .start();
 
             //Create and initialize the svg for graph
-            var svg = d3.select('#display').append('svg')
+            var svg = d3.select('svg')
             .attr('width', width)
             .attr('height', height)
                 /*.call(d3.behavior.zoom().on('zoom', function () {
@@ -197,7 +197,7 @@ function display(nb){
 
             //Create and initialize all paths
             var path = svg.selectAll('path')
-            .data(force.links());
+            .data(data.links);
 
             path.exit()
             .remove();
@@ -233,7 +233,7 @@ function display(nb){
             var r = d3.scale.sqrt().domain([data.min,data.max]).range([20,50]);
             //Create and initialize all nodes
             var circle = svg.append('g').selectAll('circle')
-            .data(force.nodes());
+            .data(data.nodes);
 
             circle.exit()
             .remove();
@@ -249,7 +249,7 @@ function display(nb){
 
             //Create and initialize all text (Name of nodes)
             var text = svg.append('g').selectAll('text')
-            .data(force.nodes());
+            .data(data.nodes);
             text.exit()
             .remove();
 
