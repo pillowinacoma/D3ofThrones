@@ -108,9 +108,12 @@ function displayButton(){
     $("nav").append('<input type="range" step="1" id="range" value=0>');
     $('#range').prop('min','0').prop('max', datas.length-1);
     $('#range').on('input',function(){
-        display(this.value);
+
+        var data = datas[this.value];
+        console.log(/*$('#nbrelations').val() = */);
+        display(data);
     })
-    display(0);
+    display(datas[0]);
 }
 
 function filterNodes(nodes){
@@ -163,9 +166,7 @@ function filterNodes(nodes){
 
 
 
-function display(nb){
-    console.log(nb)
-    data = datas[nb];
+function display(data){
     //Width of the window
     var width = $(window).width();
     var height = $(window).height();
