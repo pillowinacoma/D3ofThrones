@@ -73,7 +73,7 @@ function loadEnded(data,length){
         });
         let test = nodes.reduce((accumulator, currentValue) => {
             return [
-                Math.min(currentValue.value, accumulator[0]), 
+                Math.min(currentValue.value, accumulator[0]),
                 Math.max(currentValue.value, accumulator[1])
             ];
         }, [Number.MAX_VALUE, Number.MIN_VALUE]);
@@ -83,7 +83,7 @@ function loadEnded(data,length){
         const source = data.nodes.find(node => node.id == link.source);
         const target = data.nodes.find(node => node.id == link.target);
         link.source = source;
-        link.target = target;   
+        link.target = target;
 
     });
     data.nodes = nodes;
@@ -193,7 +193,7 @@ function display(data){
                 /*.call(d3.behavior.zoom().on('zoom', function () {
                 svg.attr('transform', 'translate(' + d3.event.translate + ')' + ' scale(' + d3.event.scale + ')')
             }))*/
-            .append('g'); 
+            .append('g');
 
 
             //Create and initialize all paths
@@ -210,7 +210,7 @@ function display(data){
             .attr('id', function(d) {
                 return d.source.id + '-' + d.target.id;
             })
-            .attr('value', function(d){ 
+            .attr('value', function(d){
                 return d.value;
                 });/*
                 .attr('marker-end', function(d) {
@@ -229,7 +229,7 @@ function display(data){
             .attr('markerHeight', 7)
             .attr('orient', 'auto')
             .append('path')
-            .attr('d', 'M0,-5L10,0L0,5'); 
+            .attr('d', 'M0,-5L10,0L0,5');
 
             var r = d3.scale.sqrt().domain([data.min,data.max]).range([20,50]);
             //Create and initialize all nodes
@@ -266,15 +266,9 @@ function display(data){
                 width = window.innerWidth, height = window.innerHeight;
                 $('#display').attr('width',$(window).width()).attr('height',$(window).height());
                 force.size([width, height]).resume();
-                
+
                 $('svg').attr('width', width).attr('height', height);
             }
-
-
-
-
-
-
             //function which placed all nodes.
             function tick() {
                 path.attr('d', linkArc);
@@ -290,7 +284,6 @@ function display(data){
 
                 return 'M' + d.source.x + ',' + d.source.y + 'A' + dr + ',' + dr + ' 0 0,1 ' + d.target.x + ',' + d.target.y;
             }
-
             //Function which manage movement of nodes
             function transform(d) {
                 return 'translate(' + d.x + ',' + d.y + ')';
