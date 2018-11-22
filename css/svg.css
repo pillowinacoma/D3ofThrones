@@ -1,13 +1,13 @@
 
 .link {
 	fill: none;
-  stroke: #666;
-	stroke-width: 1px;
+  /*stroke: #666;*/
+	/*stroke-width: 1px;*/
 }
 
 
 circle.normal {
-  fill: #ccc;
+  /*fill: #ccc;*/
 }
 
 circle.searched{
@@ -20,20 +20,20 @@ circle.searched{
 }
 
 .link{
-  stroke-width: 2px;
+  /*stroke-width: 2px;*/
 }
 
 .link.licensing {
   stroke: green;
 }
 .link.suit {
-  stroke: black;
+  /*stroke: black;*/
 }
 
 
 circle {
-  fill: #ccc;
-  stroke: #333;
+  /*fill: #ccc;*/
+  /*stroke: #333;*/
   stroke-width: 1.5px;
   transition-duration: 0.5s;
 }
