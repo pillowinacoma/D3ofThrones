@@ -1,4 +1,5 @@
 var datas = [];
+var force;
 
 $(document).ready(function() {
     getFile();
@@ -96,73 +97,49 @@ function loadEnded(data,length){
 
 }
 
-/*function getFilter(){
-    let filter = {};
-    $(".filter").map(function(){
-        filter[this.id] = this.value;
-    });
-    return filter;
-}*/
-
 function displayButton(){
+
     $("nav").append('<input type="range" step="1" id="range" value=0>');
     $('#range').prop('min','0').prop('max', datas.length-1);
     $('#range').on('input',function(){
+        let data = datas[this.value];
+        $("#nbrelations").val(data.nodes.length);
+        //$("#nbrelations").attr('value', data.nodes.length) ;
 
-        var data = datas[this.value];
-        console.log(/*$('#nbrelations').val() = */);
         display(data);
     })
+    $("#nbrelations").on('change',function(){
+        filterNodes();
+    });
+
+    $("#nbrelations").val(datas[0].nodes.length);
     display(datas[0]);
 }
 
-function filterNodes(nodes){
+
+function filterNodes(){
+    let data = jQuery.extend(true, {}, datas[$('#range').val()]);
+/*    console.log(datas[$('#range').val()]);
+    console.log(data);*/
+    var nodes = data.nodes;
+    var links = data.links;
     //const filter = getFilter();
-    nodes.sort((nodeA,nodeB) => (nodeA.value - nodeB.value))
-    nodes = nodes.slice(1,$("#nbrelations").val());
-    return nodes;
+
+    nodes.sort((nodeA,nodeB) => (nodeB.value - nodeA.value));
+    nodes = nodes.slice(0,$("#nbrelations").val());
+
+    links = links.filter(function(link){
+        console.log(link)
+        let test = nodes.filter((node) => (node.label == link.target.label || node.label == link.source.label) );
+        if (test.length > 1) {
+            return link;
+        }
+    });
+    data.nodes = nodes;
+    data.links = links;
+    display(data);
     //nodes.sort((nodeA,nodeB) => (nodeA.value - nodeB.value) )
 }
-
-/* function display(){
-    data = datas[0];
-
-    var svg = d3.select("svg");
-
-
-    var link = svg.append("g")
-        .attr("class", "link suit")
-        .selectAll("line")
-        .data(data.links)
-        .enter().append("line")
-    var node = svg.append("g")
-            .attr("class", "nodes")
-            .selectAll("circle")
-            .data(data.nodes)
-            .enter().append("circle")
-            .attr('r', function(d){
-                return r(d.value);
-            })
-            .attr('id', function(d) {
-                return d.id;
-            })
-            .call(d3.drag()
-            .on("start", dragstarted)
-            .on("drag", dragged)
-            .on("end", dragended));
-    node.append("text")
-        .text(function(d) { return d.label; });
-
-    simulation
-        .nodes(idList)
-        .on("tick", ticked);
-
-    simulation.force("link")
-        .links(idEdge);
-    simulation.alpha(0.1).restart();
-
-
- }*/
 
 
 
@@ -177,7 +154,7 @@ function display(data){
             d3.select(window).on('resize', resize);
             d3.select('g').remove();
             //Initialize force relation inside the graph
-            var force = d3.layout.force()
+            force = d3.layout.force()
             .nodes(data.nodes)
             .links(data.links)
             .size([width, height])
@@ -217,19 +194,7 @@ function display(data){
                     return 'url(#' + d.type + ')';
                 });*/
 
-            //create and initialize all markers on the paths
-            svg.append('defs').selectAll('marker')
-            .data(['suit', 'licensing', 'resolved'])
-            .enter().append('marker')
-            .attr('id', function(d) { return d; })
-            .attr('viewBox', '0 -5 10 10')
-            .attr('refX', 23)
-            .attr('refY', -1,4)
-            .attr('markerWidth',  7)
-            .attr('markerHeight', 7)
-            .attr('orient', 'auto')
-            .append('path')
-            .attr('d', 'M0,-5L10,0L0,5'); 
+
 
             var r = d3.scale.sqrt().domain([data.min,data.max]).range([20,50]);
             //Create and initialize all nodes
