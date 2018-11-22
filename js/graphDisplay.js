@@ -1,5 +1,7 @@
 var datas = [];
 var force;
+var deletedData = [];
+
 
 $(document).ready(function() {
     getFile();
@@ -118,7 +120,7 @@ function displayButton(){
 
 
 function filterNodes(){
-    let data = jQuery.extend(true, {}, datas[$('#range').val()]);
+    let data = datas[$('#range').val()];
 /*    console.log(datas[$('#range').val()]);
     console.log(data);*/
     var nodes = data.nodes;
