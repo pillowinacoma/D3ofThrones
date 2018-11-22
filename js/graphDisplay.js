@@ -1,4 +1,5 @@
 var datas = [];
+var force;
 
 //Width of the window
 var width = $(window).width();
@@ -89,31 +90,47 @@ function loadEnded(data,length){
 
 }
 
-/*function getFilter(){
-    let filter = {};
-    $(".filter").map(function(){
-        filter[this.id] = this.value;
-    });
-    return filter;
-}*/
-
 function displayButton(){
+
     $("nav").append('<input type="range" step="1" id="range" value=0>');
     $('#range').prop('min','0').prop('max', datas.length-1);
     $('#range').on('input',function(){
+        let data = datas[this.value];
+        $("#nbrelations").val(data.nodes.length);
+        //$("#nbrelations").attr('value', data.nodes.length) ;
 
-        var data = datas[this.value];
-        console.log(/*$('#nbrelations').val() = */);
         display(data);
     })
+    $("#nbrelations").on('change',function(){
+        filterNodes();
+    });
+
+    $("#nbrelations").val(datas[0].nodes.length);
     display(datas[0]);
 }
 
-function filterNodes(nodes){
+
+function filterNodes(){
+    let data = jQuery.extend(true, {}, datas[$('#range').val()]);
+/*    console.log(datas[$('#range').val()]);
+    console.log(data);*/
+    var nodes = data.nodes;
+    var links = data.links;
     //const filter = getFilter();
-    nodes.sort((nodeA,nodeB) => (nodeA.value - nodeB.value))
-    nodes = nodes.slice(1,$("#nbrelations").val());
-    return nodes;
+
+    nodes.sort((nodeA,nodeB) => (nodeB.value - nodeA.value));
+    nodes = nodes.slice(0,$("#nbrelations").val());
+
+    links = links.filter(function(link){
+        console.log(link)
+        let test = nodes.filter((node) => (node.label == link.target.label || node.label == link.source.label) );
+        if (test.length > 1) {
+            return link;
+        }
+    });
+    data.nodes = nodes;
+    data.links = links;
+    display(data);
     //nodes.sort((nodeA,nodeB) => (nodeA.value - nodeB.value) )
 }
 function display(data){
@@ -127,7 +144,7 @@ function display(data){
             d3.select(window).on('resize', resize);
             d3.select('g').remove();
             //Initialize force relation inside the graph
-            var force = d3.layout.force()
+            force = d3.layout.force()
             .nodes(data.nodes)
             .links(data.links)
             .size([width-width/4, height-height/4])
