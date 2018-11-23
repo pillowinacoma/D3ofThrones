@@ -1,5 +1,8 @@
 var datas = [];
 var force;
+var deletedData = [];
+var nb = 12;
+
 
 //Width of the window
 var width = $(window).width();
@@ -92,44 +95,63 @@ function displayButton(){
     $('#range').prop('min','0').prop('max', datas.length-1);
     $('#range').on('input',function(){
         let data = datas[this.value];
-        $("#nbrelations").val(data.nodes.length);
         //$("#nbrelations").attr('value', data.nodes.length) ;
 
         display(data);
     })
     $("#nbrelations").on('change',function(){
-        filterNodes();
+        filterNodes(this.value);
     });
 
-    $("#nbrelations").val(datas[0].nodes.length);
+    $("#nbrelations").val(100);
     display(datas[0]);
 }
 
-function filterNodes(){
+
+function filterNodes(value){
     let data = datas[$('#range').val()];
-/*    console.log(datas[$('#range').val()]);
-    console.log(data);*/
-    var nodes = data.nodes;
-    var links = data.links;
-    //const filter = getFilter();
+    let nodes = data.nodes;
+    let links = data.links;
+    let nodesDeleted = [];
+    let bufferData = {
+        node : {},
+        links : []
 
-    nodes.sort((nodeA,nodeB) => (nodeB.value - nodeA.value));
-    nodes = nodes.slice(0,$("#nbrelations").val());
+    };
+    let nbValue = Math.round(value*(nodes.length + deletedData.length)/100);
+    if (nbValue > nodes.length) {
+        let nodeToAdd = deletedData.pop();
 
-    links = links.filter(function(link){
-        //console.log(link)
-        let test = nodes.filter((node) => (node.label == link.target.label || node.label == link.source.label) );
-        if (test.length > 1) {
-            return link;
+        nodes.push(nodeToAdd.node);
+        nodeToAdd.links.map(function(link){
+            links.push(link);
+        });
+    }else{
+        nodes.sort((nodeA,nodeB) => (nodeB.value - nodeA.value));
+        nodesDeleted = nodes.slice(nbValue, nodes.length);
+
+        if(nodesDeleted.length != 0){
+
+            nodesDeleted.map(function(node){
+                bufferData.node = node;
+                bufferData.links = links.filter((link) => (node.label == link.target.label || node.label == link.source.label));
+                deletedData.push(bufferData);
+            });
+            nodes = nodes.slice(0,nbValue);
+            links = links.filter(function(link){
+                let test = nodes.filter((node) => (node.label == link.target.label || node.label == link.source.label) );
+                if (test.length > 1) {
+                    return link;
+                }
+            });
+            data.nodes = nodes;
+            data.links = links;
+
         }
-    });
-    data.nodes = nodes;
-    data.links = links;
+    }
     display(data);
     //nodes.sort((nodeA,nodeB) => (nodeA.value - nodeB.value) )
 }
-
-
 
 function display(data){
     //Width of the window
