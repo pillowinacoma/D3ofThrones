@@ -1,4 +1,23 @@
-
+.mainSelection{
+	animation-duration: 1000ms;
+   animation-name: blink;
+   animation-iteration-count: infinite;
+   animation-direction: alternate;
+	 stroke-width: 8px;
+}@keyframes blink {
+   from {
+	 	 stroke-width: 1px;
+   }
+   to {
+	 	 stroke-width: 8px;
+   }
+ }
+.selected{
+	opacity: 1;
+}
+.unselected{
+	opacity: 0.25;
+}
 .link {
 	fill: none;
   /*stroke: #666;*/
@@ -33,8 +52,8 @@ circle.searched{
 
 circle {
   /*fill: #ccc;*/
-  /*stroke: #333;*/
-  stroke-width: 1.5px;
+  stroke: #333;
+  stroke-width: .5px;
   transition-duration: 0.5s;
 }
 

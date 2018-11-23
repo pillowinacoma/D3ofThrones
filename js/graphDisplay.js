@@ -5,11 +5,7 @@ var force;
 var width = $(window).width();
 var height = $(window).height();
 
-//Create and initialize the svg for graph
-var svg1;
-
-var link,node;
-
+var charList;
 $(document).ready(function() {
     getFile();
 
@@ -92,7 +88,7 @@ function loadEnded(data,length){
 
 function displayButton(){
 
-    $("nav").append('<input type="range" step="1" id="range" value=0>');
+    //$("nav").append('');
     $('#range').prop('min','0').prop('max', datas.length-1);
     $('#range').on('input',function(){
         let data = datas[this.value];
@@ -109,9 +105,8 @@ function displayButton(){
     display(datas[0]);
 }
 
-
 function filterNodes(){
-    let data = jQuery.extend(true, {}, datas[$('#range').val()]);
+    let data = datas[$('#range').val()];
 /*    console.log(datas[$('#range').val()]);
     console.log(data);*/
     var nodes = data.nodes;
@@ -122,7 +117,7 @@ function filterNodes(){
     nodes = nodes.slice(0,$("#nbrelations").val());
 
     links = links.filter(function(link){
-        console.log(link)
+        //console.log(link)
         let test = nodes.filter((node) => (node.label == link.target.label || node.label == link.source.label) );
         if (test.length > 1) {
             return link;
@@ -133,13 +128,16 @@ function filterNodes(){
     display(data);
     //nodes.sort((nodeA,nodeB) => (nodeA.value - nodeB.value) )
 }
+
+
+
 function display(data){
     //Width of the window
     var width = $(window).width();
     var height = $(window).height();
     //nodes = filterNodes(nodes);
 
-
+            createCharList(data);
             //Call to the function resize() on resize of the window
             d3.select(window).on('resize', resize);
             d3.select('g').remove();
@@ -185,7 +183,9 @@ function display(data){
             })
             .attr('stroke-width',function(d){
               return wid(d.value);
-            });
+            })
+            .attr('class','selected');
+
 
             var r = d3.scale.sqrt().domain([data.min,data.max]).range([20,50]);
             var nodeColor = d3.scale.linear().domain([data.min,data.max]).range([-0.4,2]);
@@ -204,12 +204,14 @@ function display(data){
             .attr('id', function(d) {
                 return d.id;
             })
+            .attr('class','selected')
             .attr('fill',function(d) {
                 return bvToD3Rgb(vTobv(d.value));
             })
             .on("click",function(d){
               var neighbourLinks = [],
-                  neighbours = [];
+                  neighbours = [],
+                  currNode;
               for(var i = 0 ; i < data.links.length ; i++){
                 if(data.links[i].source.id == d.id || data.links[i].target.id == d.id){
                     neighbourLinks.push(data.links[i]);
@@ -219,8 +221,27 @@ function display(data){
                 for(var j = 0 ; j < data.nodes.length ; j++){
                   if((data.nodes[j].label == neighbourLinks[i].source.label || data.nodes[j].label == neighbourLinks[i].target.label) && (data.nodes[j].label != d.label)){
                       neighbours.push(data.nodes[j]);
+                  }else if((data.nodes[j].label == d.label)){
+                      currNode = data.nodes[j];
                   }
                 }
+              }
+              var selectLinks = d3.selectAll('path');
+              var selectCircles = d3.selectAll('circle');
+              if(d3.select('#'+d.id).attr('class') != 'mainSelection'){
+                selectCircles.attr('class','unselected');
+                selectLinks.attr('class','unselected');
+                neighbours.forEach(function(b) {
+                    var c1 = $('#'+b.id).attr('class','selected');
+                });
+                neighbourLinks.forEach(function(b) {
+                    var c2 = $('#'+b.source.id+"-"+b.target.id).attr('class','selected');
+                });
+                    var c3 = $('#'+currNode.id).attr('class','mainSelection');
+              }
+              else{
+                selectCircles.attr('class','selected');
+                selectLinks.attr('class','selected');
               }
             })
             .call(force.drag);
@@ -267,5 +288,19 @@ function display(data){
             function transform(d) {
                 return 'translate(' + d.x + ',' + d.y + ')';
             }
-
+}
+function createCharList(list) {
+  charList = d3.select('#characterList')
+          .selectAll('input')
+          .data(list.nodes);
+  charList.exit().remove();
+  charList.enter()
+          .append('input')
+          .attr('type','button')
+          .attr('value',function(d) {
+              return d.label;
+          })
+          .attr('name',function(d) {
+              return d.label;
+          });
 }
