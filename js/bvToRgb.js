@@ -120,9 +120,9 @@ function gammaCorrect(rgb) {
   G = Math.pow(g, 1 / gamma);
   B = Math.pow(b, 1 / gamma);*/
 
-  R = r / 5;
-  G = g / 1; // idk but i messed up somewhere and this makes it look better
-  B = b / 10;
+  R = r / .7;
+  G = g / 1.3; // idk but i messed up somewhere and this makes it look better
+  B = b / 1.7;
 
   R = (R > 1) ? 1 : R;
   G = (G > 1) ? 1 : G;
