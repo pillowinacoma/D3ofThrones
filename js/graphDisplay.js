@@ -110,7 +110,7 @@ function filterNodes(value){
     //console.log(deletedData);
     let data = datas[$('#range').val()];
     let nodes = data.nodes;
-    let links = data.links;    
+    let links = data.links;
     let nodesDeleted = [];
     let bufferData = {
         node : {},
@@ -137,7 +137,7 @@ function filterNodes(value){
                         clearInterval(id);
                     } else {
                         width =  width - 0.2;
-                        path.style.opacity = width;    
+                        path.style.opacity = width;
                     }
                 }
             });
@@ -149,7 +149,7 @@ function filterNodes(value){
                     clearInterval(id);
                 } else {
                     rayon --;
-                    $("#"+node.id).attr("r", rayon);
+                    $("#"+node.id).attr("r", rayon)
                 }
             }
             deletedData.push(bufferData);
@@ -164,14 +164,17 @@ function filterNodes(value){
              path.style.opacity = 1;
         });
 
-        /*links.map(function(link){
-            if(node.label == link.target.label || node.label == link.source.label){
-                var path = document.getElementById(link.source.id + '-' + link.target.id);
-                path.style.opacity = 1;
-            }
-        });*/
+/*            function frame() {
+                if ($("#"+node.id).attr("r") <= node.value ) {
+                    clearInterval(id);
+                } else {
+                    console.log("+")
+                    rayon ++;
+                    $("#"+node.id).attr("r", rayon)
+                }
+            }*/
     }
-   
+
 
 /*  let data = datas[$('#range').val()];
     let nodes = data.nodes;
@@ -244,8 +247,8 @@ function display(data){
             .attr('height', height).append('g');
 
 
-            var wid = d3.scale.linear().domain([data.linkMin,data.linkMax]).range([2,6]);
-            r = d3.scale.sqrt().domain([data.min,data.max]).range([20,50]);            
+            wid = d3.scale.linear().domain([data.linkMin,data.linkMax]).range([2,6]);
+            r = d3.scale.sqrt().domain([data.min,data.max]).range([20,50]);
             var vTobv = d3.scale.linear().domain([data.linkMin,data.linkMax]).range([-0.4,2]);
             var nodeColor = d3.scale.linear().domain([data.min,data.max]).range([-0.4,2]);
 
@@ -408,6 +411,12 @@ function createCharList(list) {
           })
           .sort(function(a,b) {
               return d3.ascending(a.label,b.label);
+          })
+          .on("mouseover",function (d) {
+              var targetedCircle = d3.select('circle[id='+d.id+']').classed('hoveredCircle',true);
+          })
+          .on("mouseout",function (d) {
+              var targetedCircle = d3.select('circle[id='+d.id+']').classed('hoveredCircle',false);
           })
           .on("click",function(d) {
             //console.log($('#range').val());
