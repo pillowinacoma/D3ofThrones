@@ -170,7 +170,7 @@ function display(data){
             .size([width-width/4, height-height/4])
             .linkDistance(200)
             .charge(-1000)
-            .gravity(.1)
+            .gravity(.15)
             .on('tick', tick)
             .start();
 
@@ -312,17 +312,47 @@ function display(data){
             }
 }
 function createCharList(list) {
+  //console.log(list.nodes);
+  var q = document.querySelectorAll('#characterList input');
+  q.forEach(function(d) {
+    d.remove();
+  })
   charList = d3.select('#characterList')
-          .selectAll('input')
+          .selectAll('#characterList input')
           .data(list.nodes);
+
   charList.exit().remove();
   charList.enter()
           .append('input')
           .attr('type','button')
           .attr('value',function(d) {
+              //console.log(d.label);
               return d.label;
           })
           .attr('name',function(d) {
               return d.label;
+          })
+          .attr('id',function(d) {
+              return "charListButton"+d.id;
+          })
+          .attr('class',function(d) {
+              return "unselectedButton";
+          })
+          .sort(function(a,b) {
+              return d3.ascending(a.label,b.label);
+          })
+          .on("click",function(d) {
+            //console.log($('#range').val());
+            var result = "";
+            foundButton = d3.select("#charListButton"+d.id);
+            foundButton.attr('class',function(d) {
+                if((d3.select("#charListButton"+d.id)).attr('class') === 'unselectedButton'){
+                  result = "selectedButton";
+                }
+                else{
+                  result = "unselectedButton";
+                }
+                return result;
+            })
           });
 }
