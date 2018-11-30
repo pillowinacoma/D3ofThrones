@@ -1,12 +1,10 @@
 var datas = [];
-var force;
 var deletedData = [];
-var nb = 12;
+var wid = d3.scale;
+var r = d3.scale;
 
 
-//Width of the window
-var width = $(window).width();
-var height = $(window).height();
+
 
 var charList;
 $(document).ready(function() {
@@ -93,6 +91,7 @@ function displayButton(){
 
     //$("nav").append('');
     $('#range').prop('min','0').prop('max', datas.length-1);
+    $('#range').val(0);
     $('#range').on('input',function(){
         let data = datas[this.value];
         //$("#nbrelations").attr('value', data.nodes.length) ;
@@ -109,7 +108,68 @@ function displayButton(){
 
 
 function filterNodes(value){
+    //console.log(deletedData);
     let data = datas[$('#range').val()];
+    let nodes = data.nodes;
+    let links = data.links;    
+    let nodesDeleted = [];
+    let nbValue = Math.round(value*(nodes.length)/100);
+    nodes.sort((nodeA,nodeB) => (nodeB.value - nodeA.value));
+    nodesDeleted = nodes.slice(nbValue, nodes.length-deletedData.length);
+    console.log("nodeDeleted :"+nodesDeleted.length,"deletedData.length"+deletedData.length, "nbValue"+nbValue )
+    if(nodesDeleted.length > 0){
+        console.log("oui")
+        nodesDeleted.map(function(node){
+            node.r = $("#"+node.id).attr("r");
+            $('#text'+node.id).attr("display","none");
+            linksDeleted = links.filter((link) => (node.label == link.target.label || node.label == link.source.label));
+            linksDeleted.map(function(link){
+
+                var id = setInterval(frame, 5);
+
+                var path = document.getElementById(link.source.id + '-' + link.target.id)
+                var width = 1;
+                function frame() {
+                    if (width <= 0 ) {
+                        clearInterval(id);
+                    } else {
+                        width =  width - 0.2;
+                        path.style.opacity = width;    
+                    }
+                }
+            });
+            var id = setInterval(frame, 5);
+            var rayon = $("#"+node.id).attr("r")
+            function frame() {
+                if ($("#"+node.id).attr("r") <= 0 ) {
+                    clearInterval(id);
+                } else {
+                    rayon --;
+                    $("#"+node.id).attr("r", rayon)     
+                }
+            }
+            deletedData.push(node);
+        });
+    } else if(nbValue+deletedData.length > nodes.length){
+        let node = deletedData.pop();
+        console.log(node);
+        var rayon = 0;
+        //var id = setInterval(frame, 5);
+        $("#"+node.id).attr("r", node.r)
+
+/*            function frame() {
+                if ($("#"+node.id).attr("r") <= node.value ) {
+                    clearInterval(id);
+                } else {
+                    console.log("+")
+                    rayon ++;
+                    $("#"+node.id).attr("r", rayon)     
+                }
+            }*/
+    }
+   
+
+/*  let data = datas[$('#range').val()];
     let nodes = data.nodes;
     let links = data.links;
     let nodesDeleted = [];
@@ -148,8 +208,8 @@ function filterNodes(value){
             data.links = links;
 
         }
-    }
-    display(data);
+    }*//*
+    display(data);*/
     //nodes.sort((nodeA,nodeB) => (nodeA.value - nodeB.value) )
 }
 
@@ -164,7 +224,7 @@ function display(data){
             d3.select(window).on('resize', resize);
             d3.select('g').remove();
             //Initialize force relation inside the graph
-            force = d3.layout.force()
+            var force = d3.layout.force()
             .nodes(data.nodes)
             .links(data.links)
             .size([width-width/4, height-height/4])
@@ -180,9 +240,12 @@ function display(data){
             .attr('height', height).append('g');
 
 
-            //Create and initialize all paths
-            var wid = d3.scale.linear().domain([data.linkMin,data.linkMax]).range([2,6]);
+            wid = d3.scale.linear().domain([data.linkMin,data.linkMax]).range([2,6]);
+            r = d3.scale.sqrt().domain([data.min,data.max]).range([20,50]);            
             var vTobv = d3.scale.linear().domain([data.linkMin,data.linkMax]).range([-0.4,2]);
+            var nodeColor = d3.scale.linear().domain([data.min,data.max]).range([-0.4,2]);
+
+
             var path = svg.selectAll('path')
             .data(data.links);
 
@@ -209,8 +272,6 @@ function display(data){
             .attr('class','selected');
 
 
-            var r = d3.scale.sqrt().domain([data.min,data.max]).range([20,50]);
-            var nodeColor = d3.scale.linear().domain([data.min,data.max]).range([-0.4,2]);
             //Create and initialize all nodes
             var circle = svg.selectAll('circle')
             .data(data.nodes);
@@ -279,6 +340,9 @@ function display(data){
             .duration(500)
             .attr('x', '2em')
             .attr('y', '-0.8em')
+            .attr('id', function(d) {
+                return "text"+d.id;
+            })
             .text(function(d) {
                 return d.label;
             });
