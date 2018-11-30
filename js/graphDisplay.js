@@ -1,6 +1,5 @@
 var datas = [];
 var deletedData = [];
-var wid = d3.scale;
 var r = d3.scale;
 
 
@@ -113,22 +112,26 @@ function filterNodes(value){
     let nodes = data.nodes;
     let links = data.links;    
     let nodesDeleted = [];
+    let bufferData = {
+        node : {},
+        links : []
+
+    };
     let nbValue = Math.round(value*(nodes.length)/100);
     nodes.sort((nodeA,nodeB) => (nodeB.value - nodeA.value));
     nodesDeleted = nodes.slice(nbValue, nodes.length-deletedData.length);
     console.log("nodeDeleted :"+nodesDeleted.length,"deletedData.length"+deletedData.length, "nbValue"+nbValue )
     if(nodesDeleted.length > 0){
-        console.log("oui")
         nodesDeleted.map(function(node){
-            node.r = $("#"+node.id).attr("r");
+            bufferData.node = node;
             $('#text'+node.id).attr("display","none");
-            linksDeleted = links.filter((link) => (node.label == link.target.label || node.label == link.source.label));
+            linksDeleted = links.filter((link) => ((node.label == link.target.label || node.label == link.source.label)));
             linksDeleted.map(function(link){
-
+                bufferData.links.push(link);
                 var id = setInterval(frame, 5);
-
-                var path = document.getElementById(link.source.id + '-' + link.target.id)
+                var path = document.getElementById(link.source.id + '-' + link.target.id);
                 var width = 1;
+
                 function frame() {
                     if (width <= 0 ) {
                         clearInterval(id);
@@ -140,32 +143,33 @@ function filterNodes(value){
             });
             var id = setInterval(frame, 5);
             var rayon = $("#"+node.id).attr("r")
+            $("#"+node.id).addClass('hide');
             function frame() {
                 if ($("#"+node.id).attr("r") <= 0 ) {
                     clearInterval(id);
                 } else {
                     rayon --;
-                    $("#"+node.id).attr("r", rayon)     
+                    $("#"+node.id).attr("r", rayon);
                 }
             }
-            deletedData.push(node);
+            deletedData.push(bufferData);
         });
     } else if(nbValue+deletedData.length > nodes.length){
-        let node = deletedData.pop();
-        console.log(node);
+        let nodeData = deletedData.pop();
+        let node = nodeData.node;
         var rayon = 0;
-        //var id = setInterval(frame, 5);
-        $("#"+node.id).attr("r", node.r)
+        $("#"+node.id).attr("r", r(node.value));
+        nodeData.links.map(function(link){
+             var path = document.getElementById(link.source.id + '-' + link.target.id);
+             path.style.opacity = 1;
+        });
 
-/*            function frame() {
-                if ($("#"+node.id).attr("r") <= node.value ) {
-                    clearInterval(id);
-                } else {
-                    console.log("+")
-                    rayon ++;
-                    $("#"+node.id).attr("r", rayon)     
-                }
-            }*/
+        /*links.map(function(link){
+            if(node.label == link.target.label || node.label == link.source.label){
+                var path = document.getElementById(link.source.id + '-' + link.target.id);
+                path.style.opacity = 1;
+            }
+        });*/
     }
    
 
@@ -240,7 +244,7 @@ function display(data){
             .attr('height', height).append('g');
 
 
-            wid = d3.scale.linear().domain([data.linkMin,data.linkMax]).range([2,6]);
+            var wid = d3.scale.linear().domain([data.linkMin,data.linkMax]).range([2,6]);
             r = d3.scale.sqrt().domain([data.min,data.max]).range([20,50]);            
             var vTobv = d3.scale.linear().domain([data.linkMin,data.linkMax]).range([-0.4,2]);
             var nodeColor = d3.scale.linear().domain([data.min,data.max]).range([-0.4,2]);
