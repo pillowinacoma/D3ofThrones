@@ -8,6 +8,7 @@ var r = d3.scale;
 var charList;
 $(document).ready(function() {
     getFile();
+    
 
 });
 
@@ -96,9 +97,16 @@ function displayButton(){
         //$("#nbrelations").attr('value', data.nodes.length) ;
 
         display(data);
+        setTimeout(function(){ filterNodes($("#nbrelations").val(), false); }, 300);
+        
     })
     $("#nbrelations").on('change',function(){
-        filterNodes(this.value);
+        if(this.value <= 100 && this.value >= 0){
+            filterNodes(this.value,true);
+        }
+        else{
+
+        }
     });
 
     $("#nbrelations").val(100);
@@ -106,118 +114,96 @@ function displayButton(){
 }
 
 
-function filterNodes(value){
-    //console.log(deletedData);
-    let data = datas[$('#range').val()];
-    let nodes = data.nodes;
-    let links = data.links;
-    let nodesDeleted = [];
-    let bufferData = {
-        node : {},
-        links : []
+function filterNodes(value, isSameGraph){
+    if(!isSameGraph){
+        if(deletedData.length > 0){
+            deletedData = [];
+            console.log("On vide les graphes");
+        }
 
-    };
-    let nbValue = Math.round(value*(nodes.length)/100);
-    nodes.sort((nodeA,nodeB) => (nodeB.value - nodeA.value));
-    nodesDeleted = nodes.slice(nbValue, nodes.length-deletedData.length);
-    console.log("nodeDeleted :"+nodesDeleted.length,"deletedData.length"+deletedData.length, "nbValue"+nbValue )
-    if(nodesDeleted.length > 0){
-        nodesDeleted.map(function(node){
-            bufferData.node = node;
-            $('#text'+node.id).attr("display","none");
-            linksDeleted = links.filter((link) => ((node.label == link.target.label || node.label == link.source.label)));
-            linksDeleted.map(function(link){
-                bufferData.links.push(link);
+    }
+    
+        //console.log(deletedData);
+        let data = datas[$('#range').val()];
+        let nodes = data.nodes;
+        let links = data.links;
+        let nodesDeleted = [];
+
+        let nbValue = Math.round(value*(nodes.length)/100);
+        nodes.sort((nodeA,nodeB) => (nodeB.value - nodeA.value));
+        nodesDeleted = nodes.slice(nbValue, nodes.length-deletedData.length);
+
+        //console.log("nodeDeleted :"+nodesDeleted.length,"deletedData.length"+deletedData.length, "nbValue"+nbValue )
+        if(nodesDeleted.length > 0){
+            nodesDeleted.map(function(node){
+                let bufferData = {
+                    node : {},
+                    links : []
+                };
+                bufferData.node = node;
+                linksDeleted = links.filter((link) => ((node.label == link.target.label || node.label == link.source.label)));
+
+                linksDeleted.map(function(link){
+                    if(!($('#'+link.source.id + '-' + link.target.id).hasClass('hide'))){
+                        $('#'+link.source.id + '-' + link.target.id).addClass('hide');
+                        bufferData.links.push(link);
+                        var id = setInterval(frame, 5);
+                        var path = document.getElementById(link.source.id + '-' + link.target.id);
+                        var width = 1;
+
+                        function frame() {
+                            if (width <= 0 ) {
+                                clearInterval(id);
+                            } else {
+                                width =  width - 0.2;
+                                path.style.opacity = width;
+                            }
+                        }
+                    } else
+                    {
+                        $('#'+link.source.id + '-' + link.target.id).addClass('hide')   
+                    }
+
+                   
+                });
+                console.log('#text'+node.id,$('#text'+node.id))
+                $('#text'+node.id).attr("display","none");
+                $("#"+node.id).addClass("hide_node");
+                $("#"+node.id).removeClass("not_hide");
                 var id = setInterval(frame, 5);
-                var path = document.getElementById(link.source.id + '-' + link.target.id);
-                var width = 1;
+                var rayon = $("#"+node.id).attr("r");
 
                 function frame() {
-                    if (width <= 0 ) {
+                    if ($("#"+node.id).attr("r") <= 0 ) {
                         clearInterval(id);
                     } else {
-                        width =  width - 0.2;
-                        path.style.opacity = width;
+                        rayon --;
+                        $("#"+node.id).attr("r", rayon)
                     }
                 }
-            });
-            var id = setInterval(frame, 5);
-            var rayon = $("#"+node.id).attr("r")
-            $("#"+node.id).addClass('hide');
-            function frame() {
-                if ($("#"+node.id).attr("r") <= 0 ) {
-                    clearInterval(id);
-                } else {
-                    rayon --;
-                    $("#"+node.id).attr("r", rayon)
-                }
-            }
-            deletedData.push(bufferData);
-        });
-    } else if(nbValue+deletedData.length > nodes.length){
-        let nodeData = deletedData.pop();
-        let node = nodeData.node;
-        var rayon = 0;
-        $("#"+node.id).attr("r", r(node.value));
-        nodeData.links.map(function(link){
-             var path = document.getElementById(link.source.id + '-' + link.target.id);
-             path.style.opacity = 1;
-        });
-
-/*            function frame() {
-                if ($("#"+node.id).attr("r") <= node.value ) {
-                    clearInterval(id);
-                } else {
-                    console.log("+")
-                    rayon ++;
-                    $("#"+node.id).attr("r", rayon)
-                }
-            }*/
-    }
-
-
-/*  let data = datas[$('#range').val()];
-    let nodes = data.nodes;
-    let links = data.links;
-    let nodesDeleted = [];
-    let bufferData = {
-        node : {},
-        links : []
-
-    };
-    let nbValue = Math.round(value*(nodes.length + deletedData.length)/100);
-    if (nbValue > nodes.length) {
-        let nodeToAdd = deletedData.pop();
-
-        nodes.push(nodeToAdd.node);
-        nodeToAdd.links.map(function(link){
-            links.push(link);
-        });
-    }else{
-        nodes.sort((nodeA,nodeB) => (nodeB.value - nodeA.value));
-        nodesDeleted = nodes.slice(nbValue, nodes.length);
-
-        if(nodesDeleted.length != 0){
-
-            nodesDeleted.map(function(node){
-                bufferData.node = node;
-                bufferData.links = links.filter((link) => (node.label == link.target.label || node.label == link.source.label));
                 deletedData.push(bufferData);
             });
-            nodes = nodes.slice(0,nbValue);
-            links = links.filter(function(link){
-                let test = nodes.filter((node) => (node.label == link.target.label || node.label == link.source.label) );
-                if (test.length > 1) {
-                    return link;
-                }
-            });
-            data.nodes = nodes;
-            data.links = links;
+        } 
+        else if(nbValue+deletedData.length > nodes.length){
+            while($(".not_hide").length != nbValue){
+                aNode = deletedData.pop();
+                let node = aNode.node;
+                $('#text'+node.id).attr("display","flex");
+                $("#"+node.id).addClass("not_hide");
+                
+                $("#"+node.id).removeClass("hide_node");
+                var rayon = 0;
 
+                $("#"+node.id).attr("r", r(node.value));       
+                aNode.links.map(function(link){
+                    $("#"+link.source.id + '-' + link.target.id).removeClass('hide');
+                     var path = document.getElementById(link.source.id + '-' + link.target.id);
+
+                     path.style.opacity = 1;
+                });
+            }
         }
-    }*//*
-    display(data);*/
-    //nodes.sort((nodeA,nodeB) => (nodeA.value - nodeB.value) )
+
 }
 
 function display(data){
@@ -294,7 +280,7 @@ function display(data){
             .attr('id', function(d) {
                 return d.id;
             })
-            .attr('class','selected')
+            .attr('class','selected not_hide')
             .attr('fill',function(d) {
                 return bvToD3Rgb(vTobv(d.value));
             })
