@@ -104,6 +104,16 @@ function displayButton(){
             filterNodes(this.value,true);
         }
         else{
+            if (this.value > 100) {
+                this.value = 100;
+                filterNodes(100,true);
+
+
+            }else if (this.value < 0) {
+                this.value = 0;
+                filterNodes(0,true);
+            }
+
 
         }
     });
@@ -142,29 +152,16 @@ function filterNodes(value, isSameGraph){
                 linksDeleted.map(function(link){
                     if(!($('#'+link.source.id + '-' + link.target.id).hasClass('hide'))){
                         $('#'+link.source.id + '-' + link.target.id).addClass('hide');
+                        $('#'+link.source.id + '-' + link.target.id).removeClass('not_hide_path');
                         bufferData.links.push(link);
-                        var id = setInterval(frame, 5);
                         var path = document.getElementById(link.source.id + '-' + link.target.id);
-                        var width = 1;
 
-                        function frame() {
-                            if (width <= 0 ) {
-                                clearInterval(id);
-                            } else {
-                                width =  width - 0.2;
-                                path.style.opacity = width;
-                            }
-                        }
-                    } else
-                    {
-                        $('#'+link.source.id + '-' + link.target.id).addClass('hide')   
-                    }
-
-                   
+                    }                   
                 });
                 $('#text'+node.id).attr("display","none");
-                $('#charListButtonn'+node.id).attr('display','none');
-                debugger;
+                d3.select('#charListButton'+node.id).style('display','none');
+
+
                 $("#"+node.id).addClass("hide_node");
                 $("#"+node.id).removeClass("not_hide");
                 var id = setInterval(frame, 5);
@@ -187,6 +184,8 @@ function filterNodes(value, isSameGraph){
                 let node = aNode.node;
                 $('#text'+node.id).attr("display","flex");
                 $("#"+node.id).addClass("not_hide");
+                d3.select('#charListButton'+node.id).style('display','flex');
+
                 
                 $("#"+node.id).removeClass("hide_node");
                 var rayon = 0;
@@ -194,9 +193,8 @@ function filterNodes(value, isSameGraph){
                 $("#"+node.id).attr("r", r(node.value));       
                 aNode.links.map(function(link){
                     $("#"+link.source.id + '-' + link.target.id).removeClass('hide');
-                     var path = document.getElementById(link.source.id + '-' + link.target.id);
+                    $("#"+link.source.id + '-' + link.target.id).addClass('not_hide_path');
 
-                     path.style.opacity = 1;
                 });
             }
         }
@@ -243,9 +241,7 @@ function display(data){
             .remove();
 
             path.enter().append('path')
-            .attr('class', function(d) {
-                return 'link ' + "suit";
-            })
+            .attr('class',"not_hide_path")
             .attr('id', function(d) {
                 return d.source.id + '-' + d.target.id;
             })

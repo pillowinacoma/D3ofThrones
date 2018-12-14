@@ -21,6 +21,13 @@ label{
   padding-bottom: 1em;
 }
 
+.hide{
+  opacity: 0;
+}
+.not_hide_path{
+  opacity: 1;
+}
+
 nav{
   background-color: #0053A1 ;
   height: 100%;
