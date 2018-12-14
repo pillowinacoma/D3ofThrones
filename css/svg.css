@@ -68,6 +68,14 @@ circle:hover{
 	opacity: 1;
 }
 
+.deadNode{
+	opacity: 0;
+}
+
+.deadLinks{
+	opacity: 0;
+}
+
 text {
   font: 10px sans-serif;
   pointer-events: none;

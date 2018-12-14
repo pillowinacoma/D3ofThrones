@@ -1,7 +1,7 @@
 var datas = [];
 var deletedData = [];
 var r = d3.scale;
-
+var nodesGraveYard = [];
 
 
 
@@ -283,6 +283,7 @@ function display(data){
                 return bvToD3Rgb(vTobv(d.value));
             })
             .on("click",function(d){
+              getNeighbourNodes(d);
               var neighbourLinks = [],
                   neighbours = [],
                   currNode;
@@ -300,16 +301,17 @@ function display(data){
                   }
                 }
               }
-              var selectLinks = d3.selectAll('path');
-              var selectCircles = d3.selectAll('circle');
-              if(d3.select('#'+d.id).attr('class') != 'mainSelection'){
+              var selectLinks = d3.selectAll('path:not(.deadLinks)');
+              var selectCircles = d3.selectAll('circle:not(.deadNode)');
+              //console.log(selectCircles[0].map(obj=>obj.__data__.label));
+              if(d3.select('#'+d.id).attr('class') != 'mainSelection' && !d3.select('#'+d.id).classed('deadNode')){
                 selectCircles.attr('class','unselected');
                 selectLinks.attr('class','unselected');
                 neighbours.forEach(function(b) {
-                    var c1 = $('#'+b.id).attr('class','selected');
+                    var c1 = $('#'+b.id+':not(.deadNode)').attr('class','selected');
                 });
                 neighbourLinks.forEach(function(b) {
-                    var c2 = $('#'+b.source.id+"-"+b.target.id).attr('class','selected');
+                    var c2 = $('#'+b.source.id+"-"+b.target.id+':not(.deadLinks)').attr('class','selected');
                 });
                     var c3 = $('#'+currNode.id).attr('class','mainSelection');
               }
@@ -406,30 +408,47 @@ function createCharList(list) {
             foundButton.attr('class',function(d) {
                 if((d3.select("#charListButton"+d.id)).attr('class') === 'unselectedButton'){
                   result = "selectedButton";
+                  hideNodes(d.id);
+                  //console.log(nodesGraveYard.map(obj=>obj.theNode[0][0].__data__.label));
                 }
                 else{
                   result = "unselectedButton";
+                  showNodes(d.id);
+                  ///console.log(nodesGraveYard.map(obj=>obj.theNode[0][0].__data__.label));
                 }
                 return result;
             })
           });
 }
-
-
-var rangeSlider = function(){
-  var slider = $('.range-slider'),
-      range = $('.range-slider__range'),
-      value = $('.range-slider__value');
-    
-  slider.each(function(){
-
-    value.each(function(){
-      var value = $(this).prev().attr('value');
-      $(this).html(value);
+function hideNodes(nodeId) {
+    var theNode = d3.select('circle[id='+nodeId+']');
+    var theLinks = d3.selectAll('path[id*='+nodeId+']');
+    var tmpObj = {theNode,theLinks};
+    nodesGraveYard.push(tmpObj);
+    nodesGraveYard.forEach(function(obj) {
+        obj.theNode.classed("deadNode",true);
+        obj.theLinks.classed("deadLinks",true);
     });
-
-    range.on('input', function(){
-      $(this).next(value).html(this.value);
+    d3.selectAll('text')[0].forEach(function(d) {
+      //console.log(d.__data__.id);
+    })
+}
+function showNodes(nodeId) {
+    var theNode = d3.select('circle[id='+nodeId+']');
+    var theLinks = d3.selectAll('path[id*='+nodeId+']');
+    var tmpObj = {theNode,theLinks};
+    nodesGraveYard = nodesGraveYard.filter(function(obj) {
+        return tmpObj.theNode[0][0].id !== obj.theNode[0][0].id;
     });
-  });
-};
+    d3.selectAll('circle.deadNode').classed('deadNode',function(d) {
+      return d.id !== tmpObj.theNode[0][0].id ;
+    });
+    theLinks[0].map(function(obj) {
+      d3.selectAll('path.deadLinks[id=\''+obj.id+'\']').classed('deadLinks',function(d) {
+        if(d3.select('circle[id=\''+d.source.id+'\']').classed('deadNode') || d3.select('circle[id=\''+d.target.id+'\']').classed('deadNode')){
+          return true;
+        }
+        return false;
+      });
+    });
+}
