@@ -31,6 +31,24 @@ label{
   opacity: 0;
 }
 
+#characterList{
+width: auto;
+
+overflow-y: scroll;
+
+height: 68%;
+
+padding: 1em;
+}
+
+#nbrelations_article{
+  text-align: center;
+
+margin: 1em 0;
+
+height: 10%;
+}
+
 .fleche{
   transition: opacity 0.2s,transform 0.5s;
   position: fixed;
@@ -65,15 +83,16 @@ nav{
   border:1px solid #fff;
   width: 13em;
   height: 2em;
-  margin-top: 0.2em;
+  margin-top: 1em;
 }
 
 input{
   border:1px solid #fff;
-  width: 13em;
-  height: 2em;
+  width: 100%;
+  height: 2.5em;
   padding: 0.2em;
   margin-top: 0.2em;
+  margin: 0.3em;
 }
 #display{
   width: 82.5%;
