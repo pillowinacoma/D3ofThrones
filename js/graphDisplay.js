@@ -111,7 +111,7 @@ function displayButton(){
 
             }else if (this.value < 0) {
                 this.value = 0;
-                filterNodes(0,true);
+                filterNodes(1,true);
             }
 
 
@@ -137,11 +137,13 @@ function filterNodes(value, isSameGraph){
     let nodesDeleted = [];
 
     let nbValue = Math.round(value*(nodes.length)/100);
-    nodes.sort((nodeA,nodeB) => (nodeB.value - nodeA.value));
+    nodes = nodes.sort((nodeA,nodeB) => (nodeB.value - nodeA.value));
+    
     nodesDeleted = nodes.slice(nbValue, nodes.length-deletedData.length);
-
+    nodesDeleted = nodesDeleted.reverse();
     if(nodesDeleted.length > 0){
         nodesDeleted.map(function(node){
+
             let bufferData = {
                 node : {},
                 links : []
@@ -155,13 +157,10 @@ function filterNodes(value, isSameGraph){
                     $('#'+link.source.id + '-' + link.target.id).removeClass('not_hide_path');
                     bufferData.links.push(link);
                     var path = document.getElementById(link.source.id + '-' + link.target.id);
-
                 }
             });
             $('#text'+node.id).attr("display","none");
             d3.select('#charListButton'+node.id).style('display','none');
-
-
             $("#"+node.id).addClass("hide_node");
             $("#"+node.id).removeClass("not_hide");
             var id = setInterval(frame, 5);
