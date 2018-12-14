@@ -60,13 +60,14 @@ input{
   position: absolute;
   bottom: 0px;
   left: 0px;
+  display: flex;
 
 }
 
 input[type=range] {
   -webkit-appearance: none;
-  width: 100%;
-  margin: 4.6px 0;
+  width: 95%;
+  margin: auto;
 }
 input[type=range]:focus {
   outline: none;
@@ -75,13 +76,11 @@ input[type=range]::-webkit-slider-runnable-track {
   width: 100%;
   height: 16.8px;
   cursor: pointer;
-  box-shadow: 0px 0px 0px #000000, 0px 0px 0px #0d0d0d;
   background: #0071a9;
   border-radius: 1.5px;
   border: 0px solid #010101;
 }
 input[type=range]::-webkit-slider-thumb {
-  box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
   border: 1px solid #000000;
   height: 26px;
   width: 18px;
@@ -92,19 +91,17 @@ input[type=range]::-webkit-slider-thumb {
   margin-top: -4.6px;
 }
 input[type=range]:focus::-webkit-slider-runnable-track {
-  background: #0071a9;
+  background: #2c3e50;
 }
 input[type=range]::-moz-range-track {
   width: 100%;
   height: 16.8px;
   cursor: pointer;
-  box-shadow: 0px 0px 0px #000000, 0px 0px 0px #0d0d0d;
   background: #0071a9;
   border-radius: 1.5px;
   border: 0px solid #010101;
 }
 input[type=range]::-moz-range-thumb {
-  box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
   border: 1px solid #000000;
   height: 26px;
   width: 18px;
@@ -124,16 +121,13 @@ input[type=range]::-ms-fill-lower {
   background: #0071a9;
   border: 0px solid #010101;
   border-radius: 3px;
-  box-shadow: 0px 0px 0px #000000, 0px 0px 0px #0d0d0d;
 }
 input[type=range]::-ms-fill-upper {
   background: #0071a9;
   border: 0px solid #010101;
   border-radius: 3px;
-  box-shadow: 0px 0px 0px #000000, 0px 0px 0px #0d0d0d;
 }
 input[type=range]::-ms-thumb {
-  box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
   border: 1px solid #000000;
   height: 26px;
   width: 18px;
@@ -143,8 +137,35 @@ input[type=range]::-ms-thumb {
   height: 16.8px;
 }
 input[type=range]:focus::-ms-fill-lower {
-  background: #0071a9;
+  background: #2c3e50;
 }
 input[type=range]:focus::-ms-fill-upper {
-  background: #0071a9;
+  background: #2c3e50;
+}
+
+#range-slider_value{
+  width: auto;
+  height: 2em;
+  vertical-align: middle;
+  text-align: center;
+  margin: auto;
+  background-color: #0071a9;
+  padding: 5px 15px;
+
+  display: flex;
+
+}
+#range-slider_p{
+  margin: auto;
+  color: white;
+}
+#arrow-left {
+width: 10px;
+
+height: auto;
+margin: auto;
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent; 
+  
+  border-right:10px solid #0071a9; 
 }

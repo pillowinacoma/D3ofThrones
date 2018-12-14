@@ -8,7 +8,7 @@ var r = d3.scale;
 var charList;
 $(document).ready(function() {
     getFile();
-    
+
 
 });
 
@@ -39,8 +39,6 @@ function getData(files){
         });
     });
 
-
-    //console.log(datas);
 }
 
 function loadEnded(data,length){
@@ -89,12 +87,14 @@ function loadEnded(data,length){
 
 function displayButton(){
 
-    //$("nav").append('');
     $('#range').prop('min','0').prop('max', datas.length-1);
     $('#range').val(0);
+
+    rangeSlider();
     $('#range').on('input',function(){
         let data = datas[this.value];
-        //$("#nbrelations").attr('value', data.nodes.length) ;
+        
+        $("#range-slider_p").html(data.name);
 
         display(data);
         setTimeout(function(){ filterNodes($("#nbrelations").val(), false); }, 300);
@@ -108,7 +108,7 @@ function displayButton(){
 
         }
     });
-
+    $("#range-slider_p").html(datas[0].name);
     $("#nbrelations").val(100);
     display(datas[0]);
 }
@@ -118,12 +118,10 @@ function filterNodes(value, isSameGraph){
     if(!isSameGraph){
         if(deletedData.length > 0){
             deletedData = [];
-            console.log("On vide les graphes");
         }
 
     }
     
-        //console.log(deletedData);
         let data = datas[$('#range').val()];
         let nodes = data.nodes;
         let links = data.links;
@@ -133,7 +131,6 @@ function filterNodes(value, isSameGraph){
         nodes.sort((nodeA,nodeB) => (nodeB.value - nodeA.value));
         nodesDeleted = nodes.slice(nbValue, nodes.length-deletedData.length);
 
-        //console.log("nodeDeleted :"+nodesDeleted.length,"deletedData.length"+deletedData.length, "nbValue"+nbValue )
         if(nodesDeleted.length > 0){
             nodesDeleted.map(function(node){
                 let bufferData = {
@@ -166,8 +163,9 @@ function filterNodes(value, isSameGraph){
 
                    
                 });
-                console.log('#text'+node.id,$('#text'+node.id))
                 $('#text'+node.id).attr("display","none");
+                $('#charListButtonn'+node.id).attr('display','none');
+                debugger;
                 $("#"+node.id).addClass("hide_node");
                 $("#"+node.id).removeClass("not_hide");
                 var id = setInterval(frame, 5);
@@ -369,7 +367,6 @@ function display(data){
             }
 }
 function createCharList(list) {
-  //console.log(list.nodes);
   var q = document.querySelectorAll('#characterList input');
   q.forEach(function(d) {
     d.remove();
@@ -383,7 +380,6 @@ function createCharList(list) {
           .append('input')
           .attr('type','button')
           .attr('value',function(d) {
-              //console.log(d.label);
               return d.label;
           })
           .attr('name',function(d) {
@@ -405,7 +401,6 @@ function createCharList(list) {
               var targetedCircle = d3.select('circle[id='+d.id+']').classed('hoveredCircle',false);
           })
           .on("click",function(d) {
-            //console.log($('#range').val());
             var result = "";
             foundButton = d3.select("#charListButton"+d.id);
             foundButton.attr('class',function(d) {
@@ -419,3 +414,22 @@ function createCharList(list) {
             })
           });
 }
+
+
+var rangeSlider = function(){
+  var slider = $('.range-slider'),
+      range = $('.range-slider__range'),
+      value = $('.range-slider__value');
+    
+  slider.each(function(){
+
+    value.each(function(){
+      var value = $(this).prev().attr('value');
+      $(this).html(value);
+    });
+
+    range.on('input', function(){
+      $(this).next(value).html(this.value);
+    });
+  });
+};
