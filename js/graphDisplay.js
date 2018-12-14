@@ -90,7 +90,6 @@ function displayButton(){
     $('#range').prop('min','0').prop('max', datas.length-1);
     $('#range').val(0);
 
-    rangeSlider();
     $('#range').on('input',function(){
         let data = datas[this.value];
         
