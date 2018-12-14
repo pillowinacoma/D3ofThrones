@@ -431,7 +431,7 @@ createCharList(data);
     }
     function showNodes(nodeId) {
         var theNode = d3.select('circle[id='+nodeId+']');
-        var theLinks = d3.selectAll('path[id*='+nodeId+']');
+        var theLinks = d3.selectAll('path[id^=\''+nodeId+'-\'],path[id$=\'-'+nodeId+'\']');
         var tmpObj = {theNode,theLinks};
         nodesGraveYard = nodesGraveYard.filter(function(obj) {
             return tmpObj.theNode[0][0].id !== obj.theNode[0][0].id;
@@ -447,7 +447,8 @@ createCharList(data);
           return false;
       });
           d3.select('path.deadLinks[id=\''+obj.id+'\']').classed('selected',function(){
-              return false;
+              //return false;
+              return !(d3.select('path.deadLinks[id=\''+obj.id+'\']').classed('deadLinks'));
           });
       });
 
