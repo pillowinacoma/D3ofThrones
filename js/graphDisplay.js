@@ -156,7 +156,7 @@ function filterNodes(value, isSameGraph){
                     bufferData.links.push(link);
                     var path = document.getElementById(link.source.id + '-' + link.target.id);
 
-                }                   
+                }
             });
             $('#text'+node.id).attr("display","none");
             d3.select('#charListButton'+node.id).style('display','none');
@@ -186,7 +186,7 @@ function filterNodes(value, isSameGraph){
             $("#"+node.id).addClass("not_hide");
             d3.select('#charListButton'+node.id).style('display','flex');
 
-            
+
             $("#"+node.id).removeClass("hide_node");
             var rayon = 0;
 
@@ -334,7 +334,9 @@ createCharList(data);
         .text(function(d) {
             return d.label;
         });
-
+        text.classed('deadNode',function(d){
+          return false;
+        })
         //function to resize svg, display and graph display
         function resize() {
             width = window.innerWidth, height = window.innerHeight;
@@ -424,9 +426,9 @@ createCharList(data);
             obj.theNode.classed("deadNode",true);
             obj.theLinks.classed("deadLinks",true);
         });
-        d3.selectAll('text')[0].forEach(function(d) {
-  //console.log(d.__data__.id);
-})
+        d3.select('text[id=\'text'+nodeId+'\']').classed('deadNode',function(){
+            return d3.select('circle[id=\''+nodeId+'\']').classed('deadNode');
+        });
     }
     function showNodes(nodeId) {
         var theNode = d3.select('circle[id='+nodeId+']');
@@ -447,7 +449,10 @@ createCharList(data);
       });
           d3.select('path.deadLinks[id=\''+obj.id+'\']').classed('selected',function(){
               return false;
-              return !(d3.select('path.deadLinks[id=\''+obj.id+'\']').classed('deadLinks'));
           });
+      });
+
+      d3.select('text[id=\'text'+nodeId+'\']').classed('deadNode',function(){
+          return d3.select('circle[id=\''+nodeId+'\']').classed('deadNode');
       });
     }
