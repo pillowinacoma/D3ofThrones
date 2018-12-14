@@ -92,12 +92,12 @@ function displayButton(){
 
     $('#range').on('input',function(){
         let data = datas[this.value];
-        
+
         $("#range-slider_p").html(data.name);
 
         display(data);
         setTimeout(function(){ filterNodes($("#nbrelations").val(), false); }, 300);
-        
+
     })
     $("#nbrelations").on('change',function(){
         if(this.value <= 100 && this.value >= 0){
@@ -130,7 +130,7 @@ function filterNodes(value, isSameGraph){
         }
 
     }
-    
+
         let data = datas[$('#range').val()];
         let nodes = data.nodes;
         let links = data.links;
@@ -177,7 +177,7 @@ function filterNodes(value, isSameGraph){
                 }
                 deletedData.push(bufferData);
             });
-        } 
+        }
         else if(nbValue+deletedData.length > nodes.length){
             while($(".not_hide").length != nbValue){
                 aNode = deletedData.pop();
@@ -190,7 +190,7 @@ function filterNodes(value, isSameGraph){
                 $("#"+node.id).removeClass("hide_node");
                 var rayon = 0;
 
-                $("#"+node.id).attr("r", r(node.value));       
+                $("#"+node.id).attr("r", r(node.value));
                 aNode.links.map(function(link){
                     $("#"+link.source.id + '-' + link.target.id).removeClass('hide');
                     $("#"+link.source.id + '-' + link.target.id).addClass('not_hide_path');
@@ -255,7 +255,8 @@ function display(data){
             .attr('stroke-width',function(d){
               return wid(d.value);
             })
-            .attr('class','selected');
+            .attr('class','selected')
+            ;
 
 
             //Create and initialize all nodes
@@ -278,7 +279,6 @@ function display(data){
                 return bvToD3Rgb(vTobv(d.value));
             })
             .on("click",function(d){
-              getNeighbourNodes(d);
               var neighbourLinks = [],
                   neighbours = [],
                   currNode;
@@ -439,11 +439,15 @@ function showNodes(nodeId) {
       return d.id !== tmpObj.theNode[0][0].id ;
     });
     theLinks[0].map(function(obj) {
-      d3.selectAll('path.deadLinks[id=\''+obj.id+'\']').classed('deadLinks',function(d) {
+      d3.select('path.deadLinks[id=\''+obj.id+'\']').classed('deadLinks',function(d) {
         if(d3.select('circle[id=\''+d.source.id+'\']').classed('deadNode') || d3.select('circle[id=\''+d.target.id+'\']').classed('deadNode')){
           return true;
         }
         return false;
+      });
+      d3.select('path.deadLinks[id=\''+obj.id+'\']').classed('selected',function(){
+          return false;
+          return !(d3.select('path.deadLinks[id=\''+obj.id+'\']').classed('deadLinks'));
       });
     });
 }
