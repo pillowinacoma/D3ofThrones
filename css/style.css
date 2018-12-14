@@ -27,6 +27,9 @@ label{
 .not_hide_path{
   opacity: 1;
 }
+.not_hide_path.deadLinks{
+  opacity: 0;
+}
 
 .fleche{
   transition: opacity 0.2s,transform 0.5s;
