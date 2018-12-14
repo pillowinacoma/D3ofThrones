@@ -6,11 +6,6 @@ $(document).ready(function() {
     var arrow = $('.fleche');
     var disp = $("#display");
 
-    jQuery('#nbrelations').keyup(function() {
-        this.value = this.value.replace(/[^0-9\.]/g, '');
-    });
-
-
     // Hide/Show nav
     $('#cash2').click(function() {
 
