@@ -7,7 +7,7 @@ var nodesGraveYard = [];
 
 var charList;
 $(document).ready(function() {
-    const dir = "data/"
+    const dir = "data/HoC/"
     getFile(dir);
 
 

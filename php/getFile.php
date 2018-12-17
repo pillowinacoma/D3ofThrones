@@ -1,10 +1,5 @@
-<<<<<<< HEAD
     <?php 
         $dir = "../".$_GET["dir"] ;
-=======
-    <?php
-        $dir = "../data/";
->>>>>>> 43e77d2e5106559d5610d1d9a2e24ca733fd67fa
         //  si le dossier pointe existe
         if (is_dir($dir)) {
 
