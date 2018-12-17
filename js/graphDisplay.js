@@ -138,7 +138,7 @@ function filterNodes(value, isSameGraph){
 
     let nbValue = Math.round(value*(nodes.length)/100);
     nodes = nodes.sort((nodeA,nodeB) => (nodeB.value - nodeA.value));
-    
+
     nodesDeleted = nodes.slice(nbValue, nodes.length-deletedData.length);
     nodesDeleted = nodesDeleted.reverse();
     if(nodesDeleted.length > 0){

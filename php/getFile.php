@@ -1,4 +1,4 @@
-    <?php 
+    <?php
         $dir = "../data/";
         //  si le dossier pointe existe
         if (is_dir($dir)) {
@@ -11,7 +11,7 @@
                   if($file != "." && $file != "..")
                     $array[]= $file;
                    // affiche le nom et le type
-                    
+
                }
                echo json_encode($array);
                // on ferme la connection
