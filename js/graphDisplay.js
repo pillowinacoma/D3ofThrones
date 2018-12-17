@@ -7,19 +7,21 @@ var nodesGraveYard = [];
 
 var charList;
 $(document).ready(function() {
-    getFile();
+    const dir = "data/"
+    getFile(dir);
 
 
 });
 
-function getFile(){
+function getFile(dir){
+
     $.ajax({
      url : './php/getFile.php',
      type : 'GET',
      dataType : 'json',
-
-     success : function(result, statut){
-        getData(result);
+      data : 'dir=' + dir,
+    success : function(result, statut){
+        getData(result,dir);
     },
 
     error : function(resultat, statut, erreur){
@@ -29,9 +31,9 @@ function getFile(){
 });
 }
 
-function getData(files){
+function getData(files,dir){
     files.map(function(file, index){
-        d3.json("data/"+file,function(data){
+        d3.json(dir+file,function(data){
             file = file.replace(/_D3.json/,"");
             data.name = file;
             loadEnded(data,files.length);

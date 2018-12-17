@@ -1,5 +1,5 @@
     <?php 
-        $dir = "../data/";
+        $dir = "../".$_GET["dir"] ;
         //  si le dossier pointe existe
         if (is_dir($dir)) {
 
