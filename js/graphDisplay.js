@@ -291,7 +291,7 @@ createCharList(data);
           neighbours = [],
           currNode;
           for(var i = 0 ; i < data.links.length ; i++){
-            if(data.links[i].source.id == d.id || data.links[i].target.id == d.id){
+            if((data.links[i].source.id == d.id || data.links[i].target.id == d.id)&& !d3.select('path[id=\''+data.links[i].source.id+"-"+data.links[i].target.id+'\']').classed('hide')){
                 neighbourLinks.push(data.links[i]);
             }
         }
@@ -304,8 +304,8 @@ createCharList(data);
               }
           }
       }
-      var selectLinks = d3.selectAll('path:not(.deadLinks)');
-      var selectCircles = d3.selectAll('circle:not(.deadNode)');
+      var selectLinks = d3.selectAll('path:not(.deadLinks):not(.hide)');
+      var selectCircles = d3.selectAll('circle:not(.deadNode):not(.hide)');
           //console.log(selectCircles[0].map(obj=>obj.__data__.label));
           if(d3.select('#'+d.id).attr('class') != 'mainSelection' && !d3.select('#'+d.id).classed('deadNode')){
             selectCircles.attr('class','unselected');
