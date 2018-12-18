@@ -82,6 +82,13 @@ data.linkMax = linkMax.value;
 data.linkMin = linkMin.value;
 
 if (datas.length == length){
+    datas.sort(function(a,b) {
+      if(a.name>b.name)
+        return 1;
+      if(b.name>a.name)
+        return -1
+      return 0;
+    });
     displayButton();
 }
 
@@ -420,7 +427,7 @@ createCharList(data);
     }
     function hideNodes(nodeId) {
         var theNode = d3.select('circle[id='+nodeId+']');
-        var theLinks = d3.selectAll('path[id*='+nodeId+']');
+        var theLinks = d3.selectAll('path[id^=\''+nodeId+'-\'],path[id$=\'-'+nodeId+'\']');
         var tmpObj = {theNode,theLinks};
         nodesGraveYard.push(tmpObj);
         nodesGraveYard.forEach(function(obj) {
