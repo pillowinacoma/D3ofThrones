@@ -30,6 +30,9 @@ label{
 .not_hide_path.deadLinks{
   opacity: 0;
 }
+.not_hide_path.unselected{
+  opacity: 0.25;
+}
 
 #characterList{
 width: auto;
@@ -54,7 +57,7 @@ height: 10%;
   position: fixed;
   opacity: 0.5;
   top:10px;
-  left: 16em; 
+  left: 16em;
   z-index: 10;
 }
 
@@ -64,10 +67,10 @@ height: 10%;
 }
 
 .flecheDown{
-  transform: rotate(180deg)  translate(10em,0); 
+  transform: rotate(180deg)  translate(10em,0);
 }
 .flecheRotate{
-  transform: rotate(180deg)  ; 
+  transform: rotate(180deg)  ;
 }
 
 nav{
@@ -215,7 +218,7 @@ width: 10px;
 height: auto;
 margin: auto;
   border-top: 10px solid transparent;
-  border-bottom: 10px solid transparent; 
-  
-  border-right:10px solid #0071a9; 
+  border-bottom: 10px solid transparent;
+
+  border-right:10px solid #0071a9;
 }
