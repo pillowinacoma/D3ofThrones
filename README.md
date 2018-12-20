@@ -81,7 +81,7 @@ Si vous utilisez notre programme en local, vous allez avoir besoin d'un serveur 
 <a name="guide-utilisateurs"></a>
 ### Guide utilisateur
 
-<<<<<<< HEAD
+
   - Dans notre projet on c'est concentré plus sur le programme qui gère les graphes que sur une interface, c.à.d que si vous voulez changer de fichiers, il va vous falloir changer la source des données dans la 17ème ligne du fichier js/graphDisplay.js, vous trouvez dans le répertoire data 3 exemples de répertoires source.
   - Notre programme est composé de 2 parties principales, le svg qui est la sortie de notre programme, et l'ensemble des entrées qui permettent de gérer l'affiche :
       + En bas la page, vous allez trouvez le slider qui permet de changer la le fichier/scène
