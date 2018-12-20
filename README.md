@@ -89,10 +89,6 @@ Si vous utilisez notre programme en local, vous allez avoir besoin d'un serveur 
       + Vous trouverez aussi une liste des nœuds/personnages que vous pouvez utiliser pour sélectionner/désélectionner des nœuds
       + Un clic sur un nœud va mettre en avant les nœuds "voisins" du nœud sélectionné, si vous recliquez sur le même nœud vous aller retourner à un affichage régulier.
 
-=======
-  - Dans notre projet on s'est concentré plus sur le programme qui gère les graphes que sur une interface, c.à.d que si vous voulez changer de fichiers, il va vous falloir changer la constante "dir" dans la 17ème ligne du fichier js/graphDisplay.js, vous trouvez dans le répertoire data 3 exemples de répertoires source.
-  - Notre programme est composé de 2 parties principales
->>>>>>> master
 
 
 
