@@ -85,7 +85,12 @@ Si vous utilisez notre programme en local, vous allez avoir besoin d'un serveur 
 ### Guide utilisateur
 
   - Dans notre projet on c'est concentré plus sur le programme qui gère les graphes que sur une interface, c.à.d que si vous voulez changer de fichiers, il va vous falloir changer la source des données dans la 17ème ligne du fichier js/graphDisplay.js, vous trouvez dans le répertoire data 3 exemples de répertoires source.
-  - Notre programme est composé de 2 parties principeaux 
+  - Notre programme est composé de 2 parties principales, le svg qui est la sortie de notre programme, et l'ensemble des entrées qui permettent de gérer l'affiche :
+      + En bas la page, vous allez trouvez le slider qui permet de changer la le fichier/scène
+      + À gauche, vous trouverez un champ pour changer le pourcentage affiché des personnages du graphe
+      + Vous trouverez aussi une liste des nœuds/personnages que vous pouvez utiliser pour sélectionner/désélectionner des nœuds
+      + Un clic sur un nœud va mettre en avant les nœuds "voisins" du nœud sélectionné, si vous recliquez sur le même nœud vous aller retourner à un affichage régulier.
+
 
 
 
