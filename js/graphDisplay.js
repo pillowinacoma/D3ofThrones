@@ -1,11 +1,13 @@
 var datas = [];
 var deletedData = [];
 var r = d3.scale;
+//tableau ou on enregistre les noeuds et liens cachés par les boutons filtres
 var nodesGraveYard = [];
-
-
-
+//la variable qui contient les boutons filtres, elle est globale pour qu'on puisse les modifier quand on change de fichier/scene
 var charList;
+
+
+
 $(document).ready(function() {
     const dir = "data/HoC/"
     getFile(dir);
@@ -82,6 +84,10 @@ data.linkMax = linkMax.value;
 data.linkMin = linkMin.value;
 
 if (datas.length == length){
+    /*
+      un tri du tableau datas en fonction du nom de l'episode avant d'appeler
+      la fonction qui fait l'affichage du slider qui appelle ensuite la fct qui affiche le graphe
+    */
     datas.sort(function(a,b) {
       if(a.name>b.name)
         return 1;
@@ -238,6 +244,11 @@ createCharList(data);
 
         wid = d3.scale.linear().domain([data.linkMin,data.linkMax]).range([2,6]);
         r = d3.scale.sqrt().domain([data.min,data.max]).range([20,50]);
+        /*
+          ces deux fonctions sont utilisés pour donner la couleur aux noeuds et aux liens en fonction de leur poids
+          ils prennent comme param un poids et retourne un double compris entre -0.4 et 2 qui va etre utilisé dans
+          la fct bvToD3Rgb qui retourn un objet color compatible avec D3
+        */
         var vTobv = d3.scale.linear().domain([data.linkMin,data.linkMax]).range([-0.4,2]);
         var nodeColor = d3.scale.linear().domain([data.min,data.max]).range([-0.4,2]);
 
@@ -286,6 +297,11 @@ createCharList(data);
         .attr('fill',function(d) {
             return bvToD3Rgb(vTobv(d.value));
         })
+        /*
+          dans cette partie (tout le on("click",...)) on gère l'evenment de clique souris, qui met en avant le noeud sur lequel
+          on à cliqué et les noeuds voisins directs et les liens entre eux, en gros en utilise des classes css qui modifient
+           l'opacité et mettent une petite animation sur le noeud selectionné
+        */
         .on("click",function(d){
           var neighbourLinks = [],
           neighbours = [],
@@ -306,7 +322,6 @@ createCharList(data);
       }
       var selectLinks = d3.selectAll('path:not(.deadLinks):not(.hide)');
       var selectCircles = d3.selectAll('circle:not(.deadNode):not(.hide)');
-          //console.log(selectCircles[0].map(obj=>obj.__data__.label));
           if(d3.select('#'+d.id).attr('class') != 'mainSelection' && !d3.select('#'+d.id).classed('deadNode')){
             selectCircles.attr('class','unselected');
             selectLinks.attr('class','unselected');
@@ -372,8 +387,11 @@ createCharList(data);
         function transform(d) {
             return 'translate(' + d.x + ',' + d.y + ')';
         }
-    }
-    function createCharList(list) {
+}
+/*
+  createCharList crée la liste de boutons filtres en utilisant les personnages/noeuds d'un "frame" de notre graphe
+*/
+function createCharList(list) {
         var q = document.querySelectorAll('#characterList input');
         q.forEach(function(d) {
             d.remove();
@@ -425,7 +443,11 @@ createCharList(data);
       })
         });
     }
-    function hideNodes(nodeId) {
+
+/*hideNodes après un appelle lors du selectionnement d'un personnage sur la liste à gauchede la page,
+  elle cache le noeud/personnage selectionné et les liens attachés à lui
+*/
+function hideNodes(nodeId) {
         var theNode = d3.select('circle[id='+nodeId+']');
         var theLinks = d3.selectAll('path[id^=\''+nodeId+'-\'],path[id$=\'-'+nodeId+'\']');
         var tmpObj = {theNode,theLinks};
@@ -438,7 +460,12 @@ createCharList(data);
             return d3.select('circle[id=\''+nodeId+'\']').classed('deadNode');
         });
     }
-    function showNodes(nodeId) {
+
+/*showNodes prends en parametre l'id du noeud qu'on veut reafficher, elle est appelé
+  lors du deselectionnement d'un personnage sur la liste à gauchede la page,
+   elle affiche le noeud si il est caché, et les liens attachés à lui.
+*/
+function showNodes(nodeId) {
         var theNode = d3.select('circle[id='+nodeId+']');
         var theLinks = d3.selectAll('path[id^=\''+nodeId+'-\'],path[id$=\'-'+nodeId+'\']');
         var tmpObj = {theNode,theLinks};

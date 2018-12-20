@@ -33,6 +33,9 @@ label{
 .not_hide_path.unselected{
   opacity: 0.25;
 }
+.not_hide_path.unselected.deadLinks{
+  opacity: 0;
+}
 
 #characterList{
 width: auto;
