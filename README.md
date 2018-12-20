@@ -1,4 +1,4 @@
-# LIFProjet 2018
+# LIFProjet Automne 2018
 
 ## Index
 
