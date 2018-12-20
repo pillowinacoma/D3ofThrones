@@ -1,5 +1,9 @@
+//Variables globales\\
+//Variable contenant toutes les données
 var datas = [];
+//Variable contenant les données supprimés lors d'un filtrage
 var deletedData = [];
+//Variable contenant une fonction de scale
 var r = d3.scale;
 //tableau ou on enregistre les noeuds et liens cachés par les boutons filtres
 var nodesGraveYard = [];
@@ -9,20 +13,22 @@ var charList;
 
 
 $(document).ready(function() {
+    //Constante à modifier pour récupérer le dossier voulu dans data;
     const dir = "data/HoC/"
     getFile(dir);
 
 
 });
 
+//Fonction qui récupère le php et par conséquent la liste des fichiers à lire. Callback : getData(liste des noms de fichiers, dossier)
 function getFile(dir){
 
     $.ajax({
-     url : './php/getFile.php',
-     type : 'GET',
-     dataType : 'json',
-      data : 'dir=' + dir,
-    success : function(result, statut){
+       url : './php/getFile.php',
+       type : 'GET',
+       dataType : 'json',
+       data : 'dir=' + dir,
+       success : function(result, statut){
         getData(result,dir);
     },
 
@@ -33,6 +39,7 @@ function getFile(dir){
 });
 }
 
+//Fonction qui ouvre chaque fichier et les lit et appelle a chaque fois la fonction loadEnded
 function getData(files,dir){
     files.map(function(file, index){
         d3.json(dir+file,function(data){
@@ -45,36 +52,45 @@ function getData(files,dir){
 
 }
 
+//Fonction qui traite les données d'un fichier afin d'obtenir sous le format souhaité, si c'est le dernier fichier chargé, appelle displayButton
 function loadEnded(data,length){
-// All nodes of this value
-nodes = [];
+    // All nodes of this value
+    nodes = [];
 
-//Parse all links in order to create a new data
-data.links.map(function(link){
-    //Parse all nodes in order to associate all nodes to take only nodes related with others
-    data.nodes.map(function(node){
-        if ((node.id == link.source || node.id == link.target) && nodes.indexOf(node) === -1) {
-            //Take all link connected to this node in order to estimate his value
-            var linkSorted = data.links.filter(link => (link.source == node.id || link.target == node.id));
-            node.value = linkSorted.reduce(((x , link) => (x += link.value)),0);
-            nodes.push(node);
-        }
+    //Parse all links in order to create a new data
+    data.links.map(function(link){
+        //Parse all nodes in order to associate all nodes to take only nodes related with others
+        data.nodes.map(function(node){
+            if ((node.id == link.source || node.id == link.target) && nodes.indexOf(node) === -1) {
+                //Take all link connected to this node in order to estimate his value
+                var linkSorted = data.links.filter(link => (link.source == node.id || link.target == node.id));
+                node.value = linkSorted.reduce(((x , link) => (x += link.value)),0);
+                nodes.push(node);
+            }
 
+        });
+        //Récupère le min et maximum de chaque graphe pour régler le "scale" du graphe
+        let nodeMinMax = nodes.reduce((accumulator, currentValue) => {
+            return [
+            Math.min(currentValue.value, accumulator[0]),
+            Math.max(currentValue.value, accumulator[1])
+            ];
+        }, [Number.MAX_VALUE, Number.MIN_VALUE]);
+        data.min = nodeMinMax[0];
+        data.max = nodeMinMax[1];
+
+        const source = data.nodes.find(node => node.id == link.source);
+        const target = data.nodes.find(node => node.id == link.target);
+        link.source = source;
+        link.target = target;
     });
-    let nodeMinMax = nodes.reduce((accumulator, currentValue) => {
-        return [
-        Math.min(currentValue.value, accumulator[0]),
-        Math.max(currentValue.value, accumulator[1])
-        ];
-    }, [Number.MAX_VALUE, Number.MIN_VALUE]);
-    data.min = nodeMinMax[0];
-    data.max = nodeMinMax[1];
 
-    const source = data.nodes.find(node => node.id == link.source);
-    const target = data.nodes.find(node => node.id == link.target);
-    link.source = source;
-    link.target = target;
-});
+    data.nodes = nodes;
+    datas.push(data);
+    const linkMax = data.links.sort((link1,link2)=>(link2.value-link1.value))[0];
+    const linkMin = data.links.sort((link1,link2)=>(link1.value-link2.value))[0];
+    data.linkMax = linkMax.value;
+    data.linkMin = linkMin.value;
 
 data.nodes = nodes;
 datas.push(data);
@@ -95,16 +111,18 @@ if (datas.length == length){
         return -1
       return 0;
     });
-    displayButton();
-}
+        displayButton();
+    }
 
 }
 
+
+//Fonction d'affichage des buttons de filtrages et input slidder des fichiers et appelle la fonction d'affichage avec les premières valeurs de Datas;
 function displayButton(){
 
     $('#range').prop('min','0').prop('max', datas.length-1);
     $('#range').val(0);
-
+    //Lors du changement de valeur de input slidder, appelle la fonction FilterNodes(Int valeur, boolean isSameGraph = false) et appelle de nouveau la fonction d'affichage du graphe en fonction de la valeur du slidder
     $('#range').on('input',function(){
         let data = datas[this.value];
 
@@ -114,6 +132,7 @@ function displayButton(){
         setTimeout(function(){ filterNodes($("#nbrelations").val(), false); }, 300);
 
     })
+    //Lors du changement de valeur du pourcentage de relation, appelle la fonction FilterNodes(Int valeur, boolean isSameGraph = true)
     $("#nbrelations").on('change',function(){
         if(this.value <= 100 && this.value >= 0){
             filterNodes(this.value,true);
@@ -137,7 +156,7 @@ function displayButton(){
     display(datas[0]);
 }
 
-
+//Filtre les noeuds pour n'avoir qu'une partie du graphe
 function filterNodes(value, isSameGraph){
     if(!isSameGraph){
         if(deletedData.length > 0){
@@ -215,6 +234,7 @@ function filterNodes(value, isSameGraph){
 
 }
 
+//Affichage du graphe traité par les filtres, il prend en paramètre les données du graphe à afficher
 function display(data){
 //Width of the window
 var width = $(window).width();
@@ -236,7 +256,7 @@ createCharList(data);
         .on('tick', tick)
         .start();
 
-        //Create and initialize the svg for graph
+        //Créé et initialise le svg sur lequel sera affiché le graphe
         var svg = d3.select('svg')
         .attr('width', width)
         .attr('height', height).append('g');
@@ -252,7 +272,7 @@ createCharList(data);
         var vTobv = d3.scale.linear().domain([data.linkMin,data.linkMax]).range([-0.4,2]);
         var nodeColor = d3.scale.linear().domain([data.min,data.max]).range([-0.4,2]);
 
-
+        //Créé et initialise tous les chemin du graphe
         var path = svg.selectAll('path')
         .data(data.links);
 
@@ -273,12 +293,12 @@ createCharList(data);
         })
         .attr('stroke-width',function(d){
           return wid(d.value);
-        })
+      })
         .attr('class','selected')
         ;
 
 
-        //Create and initialize all nodes
+        //Créé et initialise tous les noeuds du graphe
         var circle = svg.selectAll('circle')
         .data(data.nodes);
 
@@ -340,7 +360,7 @@ createCharList(data);
     })
         .call(force.drag);
 
-        //Create and initialize all text (Name of nodes)
+        //Créé et initialise tous les texte du graphe
         var text = svg.selectAll('text')
         .data(data.nodes);
         text.exit()
@@ -359,8 +379,8 @@ createCharList(data);
         });
         text.classed('deadNode',function(d){
           return false;
-        })
-        //function to resize svg, display and graph display
+      })
+        //Fonction de changement de taille du graph a afficher
         function resize() {
             width = window.innerWidth, height = window.innerHeight;
             $('#display').attr('width',$(window).width()).attr('height',$(window).height());
@@ -368,14 +388,14 @@ createCharList(data);
 
             $('svg').attr('width', width).attr('height', height);
         }
-        //function which placed all nodes.
+        //Function de place des noeuds
         function tick() {
             path.attr('d', linkArc);
             circle.attr('transform', transform);
             text.attr('transform', transform);
         }
 
-        //Function which draw arcs for the paths
+        //Function permettand de placer les liens et de les arqués lors de la modification de dr
         function linkArc(d) {
             var dx = d.target.x - d.source.x,
             dy = d.target.y - d.source.y,
@@ -383,7 +403,7 @@ createCharList(data);
 
             return 'M' + d.source.x + ',' + d.source.y + 'A' + dr + ',' + dr + ' 0 0,1 ' + d.target.x + ',' + d.target.y;
         }
-        //Function which manage movement of nodes
+        //Fonction de gestion des mouvements des noeuds
         function transform(d) {
             return 'translate(' + d.x + ',' + d.y + ')';
         }
@@ -488,7 +508,7 @@ function showNodes(nodeId) {
           });
       });
 
-      d3.select('text[id=\'text'+nodeId+'\']').classed('deadNode',function(){
+        d3.select('text[id=\'text'+nodeId+'\']').classed('deadNode',function(){
           return d3.select('circle[id=\''+nodeId+'\']').classed('deadNode');
       });
     }
