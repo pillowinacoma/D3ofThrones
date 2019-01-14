@@ -92,12 +92,6 @@ function loadEnded(data,length){
     data.linkMax = linkMax.value;
     data.linkMin = linkMin.value;
 
-data.nodes = nodes;
-datas.push(data);
-const linkMax = data.links.sort((link1,link2)=>(link2.value-link1.value))[0];
-const linkMin = data.links.sort((link1,link2)=>(link1.value-link2.value))[0];
-data.linkMax = linkMax.value;
-data.linkMin = linkMin.value;
 
 if (datas.length == length){
     /*
