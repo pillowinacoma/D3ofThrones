@@ -23,8 +23,7 @@
 
 Equipe :
 - LAMBERT Timothée
-- DERBAL Younes
-- SBAAI Abdelaziz (pillowinacoma)
+- SBAAI Abdelaziz
 
 
 <a name="encadrant"></a>
